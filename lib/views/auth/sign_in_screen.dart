@@ -1,6 +1,5 @@
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/models/responses/user/login_response.dart';
-import 'package:healio/views/auth/biometrics_screen.dart';
 import 'package:healio/views/auth/forgot_pwd_screen.dart';
 import 'package:healio/helper/app_text_styles.dart';
 import 'package:healio/widgets/custom_button.dart';

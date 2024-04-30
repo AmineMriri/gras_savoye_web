@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:healio/models/responses/user/get_profile_response.dart';
 import 'package:healio/models/responses/user/login_response.dart';
 import 'package:healio/models/responses/user/forgot_pwd_response.dart';

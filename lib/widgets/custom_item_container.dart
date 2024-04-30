@@ -94,7 +94,7 @@ class CustomItemContainer extends StatelessWidget {
                 ],
               ),
             ),
-            hasArrowForward ? Column(
+            hasArrowForward ? Row(
               children: [
                 const SizedBox(width: 5,),
                 Icon(Icons.arrow_forward_ios, color: themeProvider.cadetGrey, size: 10,),
