@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/doctor.dart';
+import 'package:healio/models/responses/doctor/details_doctor_reponse.dart';
+import 'package:healio/view_models/doctor_view_model.dart';
 import 'package:healio/widgets/custom_card.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../helper/app_text_styles.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_appbar_button.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/error_display_and_refresh.dart';
 import '../appointments/add_apt_screen.dart';
 
 class DocProfileScreen extends StatefulWidget {
-  final Doctor doctor;
-  const DocProfileScreen({super.key, required this.doctor});
+  final int docId;
+  const DocProfileScreen({super.key, required this.docId});
 
   @override
   State<DocProfileScreen> createState() => _DocProfileScreenState();
@@ -20,11 +24,21 @@ class DocProfileScreen extends StatefulWidget {
 
 class _DocProfileScreenState extends State<DocProfileScreen> {
   late ValueNotifier<bool> isDialOpen;
+  late DoctorViewModel doctorViewModel;
+  late String name;
+  late String speciality;
+  late String address;
+  late String phone;
+  late String email;
+  bool isLoading=true;
+  bool isError=false;
 
   @override
   void initState() {
     super.initState();
     isDialOpen = ValueNotifier<bool>(false);
+    doctorViewModel = Provider.of<DoctorViewModel>(context, listen: false);
+    fetchDoctorDetails();
   }
   @override
   Widget build(BuildContext context) {
@@ -99,8 +113,21 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
             ),
           ),*/
         ),
-        body: Center(
-          child: SingleChildScrollView(
+        body: RefreshIndicator(
+          onRefresh: refresh,
+          child: isLoading ? Center(
+            child: SpinKitCircle(
+                color: themeProvider.blue,
+                size: 50.0
+            ),
+          ) : isError
+              ? ErrorDisplayAndRefresh(appTextStyles, themeProvider,
+                  () async {
+                setState(() {
+                  refresh();
+                });
+              })
+              : SingleChildScrollView(
               child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
@@ -130,7 +157,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                         height: 15,
                       ),
                       Text(
-                        widget.doctor.name,
+                        name,
                         style: appTextStyles.ateneoBlueBold20,
                         textAlign: TextAlign.center,
                       ),
@@ -148,7 +175,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                       themeProvider: themeProvider,
                       isTransform: false,
                       onPressed: () async {
-                        final url=Uri.parse('tel:+216 ${(widget.doctor.phone ?? "")}');
+                        final url=Uri.parse('tel:+216 $phone');
                         if(await canLaunchUrl(url)){
                         await launchUrl(url);
                         }else{
@@ -164,7 +191,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                       themeProvider: themeProvider,
                       isTransform: false,
                       onPressed: () async {
-                        final url=Uri.parse('mailto:${(widget.doctor.email ?? "")}');
+                        final url=Uri.parse('mailto:$email');
                         if(await canLaunchUrl(url)){
                         await launchUrl(url);
                         }else{
@@ -201,7 +228,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                   themeProvider,
                   "Spécialité",
                   Text(
-                    (widget.doctor.speciality ?? ""),
+                    speciality,
                     style: appTextStyles.graniteGreyRegular14,
                   ),
                   null,
@@ -225,7 +252,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                             width: 15,
                           ),
                           Text(
-                            "+216 ${(widget.doctor.phone ?? "")}",
+                            "+216 $phone",
                             style: appTextStyles.graniteGreyRegular14,
                           ),
                         ],
@@ -243,7 +270,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                             width: 15,
                           ),
                           Text(
-                            (widget.doctor.email ?? ""),
+                            email,
                             style: appTextStyles.graniteGreyRegular14,
                           ),
                         ],
@@ -264,7 +291,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                                 width: 15,
                               ),
                               Text(
-                                (widget.doctor.address ?? ""),
+                                address,
                                 style: appTextStyles.graniteGreyRegular14,
                               ),
                             ],
@@ -305,5 +332,51 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> refresh() async {
+    print("refreshed doc details !!!!");
+    setState(() {
+      isLoading = true;
+      isError = false;
+    });
+    await fetchDoctorDetails();
+  }
+
+  Future<void> fetchDoctorDetails() async {
+    try {
+      DetailsDoctorResponse detailsDoctorResponse=await doctorViewModel.getDoctorDetails(widget.docId);
+      switch (detailsDoctorResponse.resCode) {
+        case 1:
+        // retrieve doctor details
+          name=detailsDoctorResponse.doctor!.name ?? "";
+          speciality=detailsDoctorResponse.doctor!.speciality ?? "";
+          address=detailsDoctorResponse.doctor!.address ?? "";
+          email=detailsDoctorResponse.doctor!.email ?? "";
+          phone=detailsDoctorResponse.doctor!.phone ?? "";
+          setState(() {
+            isLoading=false;
+            isError=false;
+          });
+          break;
+        case -1:
+          setState(() {
+            isError=true;
+            isLoading=false;
+          });
+          break;
+        default:
+          setState(() {
+            isError=true;
+            isLoading=false;
+          });
+      }
+    } catch (error) {
+      print("Error: $error");
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
+    }
   }
 }

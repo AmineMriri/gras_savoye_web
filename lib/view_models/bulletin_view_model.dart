@@ -18,7 +18,7 @@ class BulletinViewModel with ChangeNotifier {
         'method': 'get_bs_list',
         'args': [requestData],
         'kwargs': {},
-      });
+      }).timeout(const Duration(seconds: 20));
       final bulletinResponse = ListBulletinsResponse.fromJson(result);
       return bulletinResponse;
     } catch (e) {
@@ -40,7 +40,7 @@ class BulletinViewModel with ChangeNotifier {
         'method': 'get_bs_details',
         'args': [requestData],
         'kwargs': {},
-      });
+      }).timeout(const Duration(seconds: 20));
       final bulletinDetailsResponse = DetailsBulletinResponse.fromJson(result);
       return bulletinDetailsResponse;
     } catch (e) {

@@ -38,6 +38,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
 
   Future<void> fetchDoctors() async {
     try {
+      //ListDoctorsResponse listDoctorsResponse=await doctorViewModel.getDoctors(2,1);
       ListDoctorsResponse listDoctorsResponse=await doctorViewModel.getDoctors();
     switch (listDoctorsResponse.res_code) {
         case 1:

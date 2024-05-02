@@ -43,7 +43,7 @@ class DocItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => DocProfileScreen(doctor: doctor))),
+            .push(MaterialPageRoute(builder: (context) => DocProfileScreen(docId: doctor.docId))),
         child: CustomItemContainer(
           appTextStyles: appTextStyles,
           themeProvider: themeProvider,

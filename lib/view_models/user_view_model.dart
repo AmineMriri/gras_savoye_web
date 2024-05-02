@@ -79,7 +79,7 @@ class UserViewModel with ChangeNotifier {
         'method': 'get_profile',
         'args': [requestData],
         'kwargs': {},
-      });
+      }).timeout(const Duration(seconds: 20));
 
       final jsonResponse = result;
       final getProfileResponse = GetProfileResponse.fromJson(jsonResponse);

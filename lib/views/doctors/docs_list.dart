@@ -45,18 +45,7 @@ class _DocsListState extends State<DocsList> {
   Widget build(BuildContext context) {
     final themeProvider = context.themeProvider;
     AppTextStyles appTextStyles = AppTextStyles(context);
-    return filteredDoctorsList.isEmpty
-        ? Container(
-      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Center(
-        child: Text(
-          'Aucun médecin n\'a été  trouvé!',
-          textAlign: TextAlign.center,
-          style: appTextStyles.blueSemiBold16,
-        ),
-      ),
-    )
-        : Column(
+    return Column(
       children: [
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -65,10 +54,22 @@ class _DocsListState extends State<DocsList> {
             children: [
               CustomSearchWidgets(
                 onChanged: (query) {
-                  //_filterDocsList(query);
+                  _filterDocsList(query);
+                  print("here filtering ...");
                 },
                 searchHint: "Recherche par nom du médecin",
-                body: Column(
+                body: filteredDoctorsList.isEmpty
+                    ? Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: Center(
+                    child: Text(
+                      'Aucun médecin n\'a été  trouvé!',
+                      textAlign: TextAlign.center,
+                      style: appTextStyles.blueSemiBold16,
+                    ),
+                  ),
+                )
+                    : Column(
                   children: [
                     CustomSearchDropdown(
                       list: regionsList,
@@ -123,10 +124,6 @@ class _DocsListState extends State<DocsList> {
                   },
                 ),
               ),
-              /*if (isLoading)
-                        const Center(
-                          child: CircularProgressIndicator(),
-                        ),*/
             ],
           ),
         ),
@@ -134,15 +131,13 @@ class _DocsListState extends State<DocsList> {
     );
   }
 
-  /*void _filterDocsList(String query) {
-    filteredDocsList.clear();
-    if (query.isNotEmpty) {
-      filteredDocsList.addAll(widget.docsList
-          .where((bs) => bs.numBs.toLowerCase().contains(query.toLowerCase())));
-    } else {
-      filteredDocsList.addAll(widget.docsList);
-    }
-  }*/
+  void _filterDocsList(String query) {
+    setState(() {
+      filteredDoctorsList = widget.doctorsList.where((doc) =>
+          doc.name.toLowerCase().contains(query.toLowerCase())).toList();
+    });
+  }
+
 
   bool generateRandomBool() {
     Random random = Random();
