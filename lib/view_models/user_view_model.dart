@@ -80,15 +80,9 @@ class UserViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       });
-      print("retrieved result");
-      print(result != null ? result : "result is null");
 
       final jsonResponse = result;
       final getProfileResponse = GetProfileResponse.fromJson(jsonResponse);
-      print("RESPONSE CODE GET PROFILE");
-      print(getProfileResponse.res_code);
-      print(getProfileResponse.parent);
-      print(getProfileResponse.enfants);
 
       return getProfileResponse;
     }  on OdooException catch (e) {

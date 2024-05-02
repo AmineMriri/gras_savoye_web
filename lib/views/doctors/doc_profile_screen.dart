@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
+import 'package:healio/models/doctor.dart';
 import 'package:healio/widgets/custom_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../helper/app_text_styles.dart';
@@ -10,7 +11,8 @@ import '../../widgets/custom_button.dart';
 import '../appointments/add_apt_screen.dart';
 
 class DocProfileScreen extends StatefulWidget {
-  const DocProfileScreen({super.key});
+  final Doctor doctor;
+  const DocProfileScreen({super.key, required this.doctor});
 
   @override
   State<DocProfileScreen> createState() => _DocProfileScreenState();
@@ -128,7 +130,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                         height: 15,
                       ),
                       Text(
-                        "Dr. Foulen Ben Foulen",
+                        widget.doctor.name,
                         style: appTextStyles.ateneoBlueBold20,
                         textAlign: TextAlign.center,
                       ),
@@ -146,7 +148,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                       themeProvider: themeProvider,
                       isTransform: false,
                       onPressed: () async {
-                        final url=Uri.parse('tel:+216 52221191');
+                        final url=Uri.parse('tel:+216 ${(widget.doctor.phone ?? "")}');
                         if(await canLaunchUrl(url)){
                         await launchUrl(url);
                         }else{
@@ -162,7 +164,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                       themeProvider: themeProvider,
                       isTransform: false,
                       onPressed: () async {
-                        final url=Uri.parse('mailto:example.test@testing.com');
+                        final url=Uri.parse('mailto:${(widget.doctor.email ?? "")}');
                         if(await canLaunchUrl(url)){
                         await launchUrl(url);
                         }else{
@@ -199,7 +201,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                   themeProvider,
                   "Spécialité",
                   Text(
-                    "Dentiste",
+                    (widget.doctor.speciality ?? ""),
                     style: appTextStyles.graniteGreyRegular14,
                   ),
                   null,
@@ -223,7 +225,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                             width: 15,
                           ),
                           Text(
-                            "+216 12345678",
+                            "+216 ${(widget.doctor.phone ?? "")}",
                             style: appTextStyles.graniteGreyRegular14,
                           ),
                         ],
@@ -241,7 +243,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                             width: 15,
                           ),
                           Text(
-                            "dr.foulen@gmail.com",
+                            (widget.doctor.email ?? ""),
                             style: appTextStyles.graniteGreyRegular14,
                           ),
                         ],
@@ -262,7 +264,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                                 width: 15,
                               ),
                               Text(
-                                "4 Rue XYZ, Ariana",
+                                (widget.doctor.address ?? ""),
                                 style: appTextStyles.graniteGreyRegular14,
                               ),
                             ],

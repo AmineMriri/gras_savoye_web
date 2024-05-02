@@ -5,7 +5,6 @@ import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
 import 'package:healio/models/responses/bulletin/list_bulletins_response.dart';
 import 'package:healio/view_models/bulletin_view_model.dart';
-import 'package:healio/view_models/user_view_model.dart';
 import 'package:healio/views/auth/sign_in_screen.dart';
 import 'package:healio/views/bulletins/attach_bulletin_screen.dart';
 import 'package:healio/views/bulletins/bulletin_list.dart';
@@ -38,7 +37,6 @@ class _BulletinsScreenState extends State<BulletinsScreen>
   bool? hasParents;
   List<Widget> tabs = [];
   late BulletinViewModel bulletinViewModel;
-  late UserViewModel userViewModel;
   List<Bulletin> bsList = [];
   List<Bulletin> bsListAdherent = [];
   List<Bulletin> bsListConjoint = [];
@@ -58,7 +56,6 @@ class _BulletinsScreenState extends State<BulletinsScreen>
   void initState() {
     super.initState();
     bulletinViewModel = Provider.of<BulletinViewModel>(context, listen: false);
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _userDataFuture = initializeUserData();
   }
 

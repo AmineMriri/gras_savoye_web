@@ -19,8 +19,6 @@ class BulletinViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       });
-      print("HERE!!!!!!!!!!!!");
-      print(result);
       final bulletinResponse = ListBulletinsResponse.fromJson(result);
       return bulletinResponse;
     } catch (e) {
@@ -28,6 +26,7 @@ class BulletinViewModel with ChangeNotifier {
       return ListBulletinsResponse(res_code: -1, bulletins: []);
     }
   }
+
 
   Future<DetailsBulletinResponse> getBulletinDetails(int bsId) async {
     try {
@@ -43,8 +42,6 @@ class BulletinViewModel with ChangeNotifier {
         'kwargs': {},
       });
       final bulletinDetailsResponse = DetailsBulletinResponse.fromJson(result);
-      print("bulletinDetailsResponse !!!");
-      print(result);
       return bulletinDetailsResponse;
     } catch (e) {
       print("Error fetching bulletin details: $e");

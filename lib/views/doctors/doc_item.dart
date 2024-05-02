@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
+import 'package:healio/models/doctor.dart';
 import 'package:healio/views/appointments/add_apt_screen.dart';
 import 'package:healio/views/doctors/doc_profile_screen.dart';
 import 'package:healio/widgets/custom_item_container.dart';
 import '../../helper/app_text_styles.dart';
 
 class DocItem extends StatelessWidget {
-  const DocItem({Key? key}) : super(key: key);
+  final Doctor doctor;
+  const DocItem({Key? key, required this.doctor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +43,13 @@ class DocItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const DocProfileScreen())),
+            .push(MaterialPageRoute(builder: (context) => DocProfileScreen(doctor: doctor))),
         child: CustomItemContainer(
           appTextStyles: appTextStyles,
           themeProvider: themeProvider,
           imgAsset: 'assets/images/blank_profile_pic.png',
-          heading: "Dr. Foulen Ben Flen",
-          subHeading: "Généraliste",
+          heading: doctor.name,
+          subHeading: doctor.speciality==null ? "" : doctor.speciality!,
           detailsPrimary: "5",
           detailsSecondary: "Km",
           hasArrowForward: true,

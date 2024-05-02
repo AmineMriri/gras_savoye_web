@@ -1,19 +1,27 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
+import 'package:healio/models/doctor.dart';
 import 'package:healio/views/doctors/doc_item.dart';
 import '../../helper/app_text_styles.dart';
 import '../../widgets/custom_search_dropdown_button.dart';
 import '../../widgets/custom_search_widgets.dart';
 
 class DocsList extends StatefulWidget {
-  const DocsList({super.key});
+  List<Doctor> doctorsList;
+  Future<void> Function() onRefresh;
+
+  DocsList(
+      {super.key,
+        required this.doctorsList,
+        required this.onRefresh});
 
   @override
   State<DocsList> createState() => _DocsListState();
 }
 
 class _DocsListState extends State<DocsList> {
+  List<Doctor> filteredDoctorsList = [];
   List<String> specialitiesList = [
     'Généraliste',
     'ORL',
@@ -26,11 +34,29 @@ class _DocsListState extends State<DocsList> {
     'Bizerte',
     'Nabeul',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredDoctorsList.addAll(widget.doctorsList);
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.themeProvider;
     AppTextStyles appTextStyles = AppTextStyles(context);
-    return Column(
+    return filteredDoctorsList.isEmpty
+        ? Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      child: Center(
+        child: Text(
+          'Aucun médecin n\'a été  trouvé!',
+          textAlign: TextAlign.center,
+          style: appTextStyles.blueSemiBold16,
+        ),
+      ),
+    )
+        : Column(
       children: [
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -74,7 +100,7 @@ class _DocsListState extends State<DocsList> {
                 height: 10,
               ),
               Text(
-                "Résultat: 10 Médecins",
+                "Résultat: ${filteredDoctorsList.length} Médecins",
                 style: appTextStyles.ateneoBlueMedium12,
               ),
             ],
@@ -84,14 +110,15 @@ class _DocsListState extends State<DocsList> {
           child: Stack(
             children: [
               RefreshIndicator(
-                onRefresh: _onRefresh,
+                onRefresh: widget.onRefresh,
                 child: ListView.builder(
-                  itemCount: 10,
+                  itemCount: filteredDoctorsList.length,
                   itemBuilder: (context, index) {
+                    final doctor = filteredDoctorsList[index];
                     return Container(
                       margin: const EdgeInsets.symmetric(horizontal: 15),
                       padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: const DocItem(),
+                      child: DocItem(doctor: doctor),
                     );
                   },
                 ),
@@ -121,6 +148,4 @@ class _DocsListState extends State<DocsList> {
     Random random = Random();
     return random.nextBool();
   }
-
-  Future<void> _onRefresh() async {}
 }
