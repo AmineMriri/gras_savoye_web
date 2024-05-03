@@ -9,6 +9,7 @@ class Bulletin {
   final double totalDep;
   final double totalPec;
   final String state;
+  final bool isCV;
 
   Bulletin({
     required this.bsId,
@@ -21,6 +22,7 @@ class Bulletin {
     required this.totalDep,
     required this.totalPec,
     required this.state,
+    required this.isCV,
   });
 
   factory Bulletin.fromJson(Map<String, dynamic> json) {
@@ -37,10 +39,11 @@ class Bulletin {
       totalDep: double.parse(json['total_dep'].toStringAsFixed(3)),
       totalPec: double.parse(json['total_pec'].toStringAsFixed(3)),
       state: json['state'],
+      isCV: json['is_cv'],
     );
   }
   @override
   String toString() {
-    return 'Bulletin{idBs: $bsId, numBs: $numBs, dateMaladie: $dateMaladie, dateReglement: $dateReglement, patient: $patient, prestataire: $prestataire, adherent: $adherent, totalDep: $totalDep, totalPec: $totalPec, state: $state}';
+    return 'Bulletin{idBs: $bsId, numBs: $numBs, dateMaladie: $dateMaladie, dateReglement: $dateReglement, patient: $patient, prestataire: $prestataire, adherent: $adherent, totalDep: $totalDep, totalPec: $totalPec, state: $state, isCV: $isCV}';
   }
 }

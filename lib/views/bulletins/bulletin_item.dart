@@ -1,19 +1,27 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
 import 'package:healio/widgets/custom_percent.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import '../../helper/app_text_styles.dart';
 import '../../helper/date_utils.dart';
+import '../../view_models/bulletin_view_model.dart';
 import 'bulletin_details_screen.dart';
 
 
 class BulletinItem extends StatelessWidget {
   final Bulletin bs;
-  const BulletinItem({Key? key, required this.bs})
+  BulletinItem({Key? key, required this.bs})
       : super(key: key);
+
+  late BulletinViewModel bulletinViewModel;
 
   @override
   Widget build(BuildContext context) {
+    bulletinViewModel = Provider.of<BulletinViewModel>(context, listen: false);
     final themeProvider = context.themeProvider;
     AppTextStyles appTextStyles = AppTextStyles(context);
     return InkWell(
@@ -71,7 +79,7 @@ class BulletinItem extends StatelessWidget {
                     ),
                     if(!isInProgress(bs.state))
                       GestureDetector(
-                        onTap: ()=>print("GestureDetector"),
+                        onTap: ()=>fetchAndSaveDocument(context, 293376, 1721027, 'CV'), //TODO DYNAMIC ID + is: CV or Quittance
                         child: Icon(
                           Icons.download_for_offline_rounded,
                           color: themeProvider.graniteGrey,
@@ -130,5 +138,18 @@ class BulletinItem extends StatelessWidget {
 
   bool isInProgress(String state){
     return state.toLowerCase()=="en cours";
+  }
+
+  void fetchAndSaveDocument(BuildContext context, int bsId, int bsNum, String type) async {
+
+
+    try {
+      File file = await bulletinViewModel.getBsDocument(bsId, bsNum, type);
+      String filepath=file.path;
+      print('Document path at: $filepath');
+
+    } catch (e) {
+      print('Error fetching or saving document: $e');
+    }
   }
 }

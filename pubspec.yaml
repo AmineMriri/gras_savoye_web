@@ -63,6 +63,9 @@ dependencies:
   open_settings_plus: ^0.3.2
   local_auth: ^2.2.0
   number_paginator: ^0.4.1
+  path_provider:
+  permission_handler:
+  open_file: ^3.3.2
 
 dev_dependencies:
   flutter_test:

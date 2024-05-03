@@ -28,8 +28,8 @@ final GlobalKey<State> dashboardKey = GlobalKey<State>();
 class _NavigationBottomState extends State<NavigationBottom> {
   List<Widget> _buildScreen() {
     return [
-      const DoctorsScreen(),
       BulletinsScreen(loginResponse: widget.loginResponse,),
+      const DoctorsScreen(),
       const AppointmentsScreen(),
       const NotificationsScreen(),
       const ProfileScreen()
