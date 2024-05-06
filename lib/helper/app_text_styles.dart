@@ -294,4 +294,13 @@ class AppTextStyles {
       decoration: TextDecoration.underline,
     );
   }
+
+  TextStyle get ateneoBlueMediumUnderlined12 {
+    final themeProvider = context.themeProvider;
+    return _baseMediumTextStyle.copyWith(
+      color: themeProvider.ateneoBlue,
+      fontSize: 12,
+      decoration: TextDecoration.underline,
+    );
+  }
 }

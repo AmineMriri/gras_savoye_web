@@ -66,6 +66,7 @@ dependencies:
   path_provider:
   permission_handler:
   open_file: ^3.3.2
+  open_file_plus: ^3.4.1+1
 
 dev_dependencies:
   flutter_test:

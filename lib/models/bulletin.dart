@@ -27,21 +27,22 @@ class Bulletin {
 
   factory Bulletin.fromJson(Map<String, dynamic> json) {
     return Bulletin(
-      bsId: json['bs_id'],
-      numBs: json['num_bs'],
-      dateMaladie: json['date_maladie'],
-      dateReglement: json['date_reglement'] is String
-          ? json['date_reglement']
-          : json['date_reglement'].toString(),
-      patient: json['patient'],
-      prestataire: json['prestataire'],
-      adherent: json['adherent'],
-      totalDep: double.parse(json['total_dep'].toStringAsFixed(3)),
-      totalPec: double.parse(json['total_pec'].toStringAsFixed(3)),
-      state: json['state'],
-      isCV: json['is_cv'],
+      bsId: json['bs_id'] as int,
+      numBs: json['num_bs'] as String? ?? '',
+      dateMaladie: json['date_maladie'] as String? ?? '',
+      dateReglement: json['date_reglement'] != null
+          ? json['date_reglement'].toString()
+          : '',
+      patient: json['patient'] as String? ?? '',
+      prestataire: json['prestataire'] as String? ?? '',
+      adherent: json['adherent'] as String? ?? '',
+      totalDep: (json['total_dep'] as num?)?.toDouble() ?? 0.0,
+      totalPec: (json['total_pec'] as num?)?.toDouble() ?? 0.0,
+      state: json['state'] as String? ?? '',
+      isCV: json['is_cv'] as bool? ?? false,
     );
   }
+
   @override
   String toString() {
     return 'Bulletin{idBs: $bsId, numBs: $numBs, dateMaladie: $dateMaladie, dateReglement: $dateReglement, patient: $patient, prestataire: $prestataire, adherent: $adherent, totalDep: $totalDep, totalPec: $totalPec, state: $state, isCV: $isCV}';

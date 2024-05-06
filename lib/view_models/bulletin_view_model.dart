@@ -22,6 +22,7 @@ class BulletinViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
+      //print("here test bs: "+result);
       final bulletinResponse = ListBulletinsResponse.fromJson(result);
       return bulletinResponse;
     } catch (e) {
@@ -52,20 +53,16 @@ class BulletinViewModel with ChangeNotifier {
     }
   }
 
-  Future<File> getBsDocument(int bsId, int bsNum, String type) async {
+  Future<File> getBsDocument(int bsId, String bsNum, String type) async {
     try {
-      await client.authenticate(
+    await client.authenticate(
           'backoffice_Gras_2', 'testportail@test.com', '%ZmYcp^No~1`!7H01T');
-      String fileName;
-      if(type=="CV"){
-        fileName='$type - $bsNum.pdf';
-      }else{
-        fileName='$type $bsNum.pdf';
-      }
-      final requestData = {
-        'bs_id': bsId,
+      //String fileName = type == "CV" ? '$type - $bsNum.pdf' : '$type $bsNum.pdf';
+    String fileName = type == "CV" ? '$type - 1721027.pdf' : '$type 1721027.pdf';
+
+    final requestData = {
+        'bs_id': 293376,
         'name_report': fileName,
-        //'filename':fileName,
       };
 
       final result = await client.callKw({
@@ -75,23 +72,21 @@ class BulletinViewModel with ChangeNotifier {
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
 
-      // Assuming 'result' contains the response from Odoo
+      // response from Odoo
       if (result != null && result['datas'] != null) {
-        print(result);
-        // Extract and decode the file content from the response
-        String fileData = result['datas']; // Assuming 'data' contains the base64-encoded file content
-        List<int> fileBytes = base64.decode(fileData); // Decode base64 to get binary file content
+        // extract and decode the file content from the response
+        String fileData = result['datas'];
+        List<int> fileBytes = base64.decode(fileData); // decode base64 to get binary file content
 
-        // Define a file path to save the document
-        String fileName = '${type}_${bsNum}_${bsId}.pdf'; // Example file name
+        String fileName = '${type}_${bsNum}_${bsId}.pdf';
         String filePath = '/storage/emulated/0/Download/$fileName';
 
-        // Save the file to local storage
+        // save the file to local storage
         File savedFile = await File(filePath).writeAsBytes(fileBytes);
 
         print('File saved successfully: $filePath');
 
-        // Return the path to the saved file
+        // return the path to the saved file
         return savedFile;
       } else {
         throw Exception('Invalid or empty response from Odoo');

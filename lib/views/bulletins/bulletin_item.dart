@@ -1,10 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
 import 'package:healio/widgets/custom_percent.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:open_file_plus/open_file_plus.dart';
 import 'package:provider/provider.dart';
 import '../../helper/app_text_styles.dart';
 import '../../helper/date_utils.dart';
@@ -78,12 +77,26 @@ class BulletinItem extends StatelessWidget {
                       style: appTextStyles.ateneoBlueRegular12,
                     ),
                     if(!isInProgress(bs.state))
-                      GestureDetector(
-                        onTap: ()=>fetchAndSaveDocument(context, 293376, 1721027, 'CV'), //TODO DYNAMIC ID + is: CV or Quittance
-                        child: Icon(
-                          Icons.download_for_offline_rounded,
-                          color: themeProvider.graniteGrey,
-                        ),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: ()=>fetchAndSaveDocument(context, bs.bsId, bs.numBs, 'Quittance'),
+                            child: Icon(
+                              Icons.download_for_offline_rounded,
+                              color: themeProvider.graniteGrey,
+                            ),
+                          ),
+                          if(bs.isCV)
+                            const SizedBox(width: 10,),
+                          if(bs.isCV)
+                            GestureDetector(
+                              onTap: ()=>fetchAndSaveDocument(context, bs.bsId, bs.numBs, 'CV'),
+                              child: Icon(
+                                Icons.download_for_offline_outlined,
+                                color: themeProvider.graniteGrey,
+                              ),
+                            ),
+                        ],
                       ),
                   ],
                 )
@@ -140,16 +153,32 @@ class BulletinItem extends StatelessWidget {
     return state.toLowerCase()=="en cours";
   }
 
-  void fetchAndSaveDocument(BuildContext context, int bsId, int bsNum, String type) async {
-
-
+  void fetchAndSaveDocument(BuildContext context, int bsId, String bsNum, String type) async {
     try {
       File file = await bulletinViewModel.getBsDocument(bsId, bsNum, type);
       String filepath=file.path;
+      OpenFile.open(filepath);
       print('Document path at: $filepath');
 
     } catch (e) {
       print('Error fetching or saving document: $e');
     }
   }
+
+/*Future<void> requestPermission(BuildContext context, int bsId, String bsNum, String type) async {
+    const permission = Permission.storage;
+
+    if (await permission.isDenied) {
+      final result = await permission.request();
+      if (result.isGranted) {
+        fetchAndSaveDocument(context, bsId, bsNum, type);
+      } else if (result.isDenied) {
+        print("Permission is denied");
+      } else if (result.isPermanentlyDenied) {
+        print("Permission is permanently denied");
+      }
+    }else{
+      fetchAndSaveDocument(context, bsId, bsNum, type);
+    }
+  }*/
 }

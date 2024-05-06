@@ -18,9 +18,9 @@
         </intent>
     </queries>
     <application
+        android:requestLegacyExternalStorage="true"
         android:label="healio"
         android:name="${applicationName}"
-        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

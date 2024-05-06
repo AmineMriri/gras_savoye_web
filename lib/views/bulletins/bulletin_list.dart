@@ -60,6 +60,7 @@ class _BulletinListState extends State<BulletinList> {
                         _filterBsList(query);
                       },
                       searchHint: "Recherche par N° de bulletin",
+                      onPressedFilter: (){},
                       body: Column(
                         children: [
                           CustomDropdown(

@@ -35,6 +35,7 @@ class _AppointmentsListState extends State<AppointmentsList> {
                   //_filterAptsList(query);
                 },
                 searchHint: "Recherche par nom du médecin",
+                onPressedFilter: (){},
                 body: Column(
                   children: [
                     CustomDropdown(

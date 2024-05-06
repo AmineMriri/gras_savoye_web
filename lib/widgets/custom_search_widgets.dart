@@ -6,13 +6,17 @@ import 'custom_bottom_sheet.dart';
 
 class CustomSearchWidgets extends StatefulWidget {
   final void Function(String)? onChanged;
+  final void Function()? onPressedSearch;
+  final void Function()? onPressedFilter;
   TextEditingController? controller;
   String searchHint;
   Widget body;
 
   CustomSearchWidgets({
     this.onChanged,
+    this.onPressedSearch,
     this.controller,
+    required this.onPressedFilter,
     required this.searchHint,
     required this.body,
   });
@@ -54,9 +58,12 @@ class _CustomSearchWidgetsState extends State<CustomSearchWidgets> {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
-              suffixIcon: Icon(
-                Icons.search,
-                color: themeProvider.cadetGrey,
+              suffixIcon: GestureDetector(
+                onTap: widget.onPressedSearch,
+                child: Icon(
+                  Icons.search,
+                  color: themeProvider.blue,
+                ),
               ),
             ),
           ),
@@ -84,8 +91,11 @@ class _CustomSearchWidgetsState extends State<CustomSearchWidgets> {
                       return widget.body;
                     }
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
+                onPressed: (){
+                  if (widget.onPressedFilter != null) {
+                    widget.onPressedFilter!();
+                    Navigator.pop(context);
+                  }
                 },
                 onClosePressed: () {
                   Navigator.pop(context);

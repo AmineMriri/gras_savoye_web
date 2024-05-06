@@ -14,7 +14,7 @@ class CustomBottomSheet {
     required bool hasResetBtn,
 
     required ThemeProvider themeProvider,
-    required Future<void>? Function()? onPressed,
+    required void Function()? onPressed,
     required void Function()? onClosePressed,
   }) {
     AppTextStyles appTextStyles = AppTextStyles(context);

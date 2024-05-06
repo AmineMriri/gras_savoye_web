@@ -22,6 +22,24 @@ class DoctorViewModel with ChangeNotifier {
       print("Error fetching doctors: $e");
       return ListDoctorsResponse(res_code: -1, doctors: []);
     }
+  }
+
+
+  Future<ListDoctorsResponse> getDoctors(int page, int pageSize) async {
+    try {
+      await clientLocal.authenticate('odoo_test', 'admin', 'admin');
+      final result = await clientLocal.callKw({
+        'model': 'hms.physician',
+        'method': 'get_physician_list',
+        'args': [page, pageSize],
+        'kwargs': {},
+      }).timeout(const Duration(seconds: 20));
+      final doctorResponse = ListDoctorsResponse.fromJson(result);
+      return doctorResponse;
+    } catch (e) {
+      print("Error fetching doctors: $e");
+      return ListDoctorsResponse(res_code: -1, doctors: []);
+    }
   }*/
 
   Future<ListDoctorsResponse> getDoctors() async {
@@ -32,6 +50,42 @@ class DoctorViewModel with ChangeNotifier {
         'model': 'hms.physician',
         'method': 'get_physician_list',
         'args': [],
+        'kwargs': {},
+      }).timeout(const Duration(seconds: 20));
+      final doctorResponse = ListDoctorsResponse.fromJson(result);
+      return doctorResponse;
+    } catch (e) {
+      print("Error fetching doctors: $e");
+      return ListDoctorsResponse(res_code: -1, doctors: []);
+    }
+  }
+
+  Future<ListDoctorsResponse> searchDoctors(String docName) async {
+    try {
+      await clientLocal.authenticate(
+          'odoo_test', 'admin', 'admin');
+      final result = await clientLocal.callKw({
+        'model': 'hms.physician',
+        'method': 'search_physicians_by_name',
+        'args': [docName],
+        'kwargs': {},
+      }).timeout(const Duration(seconds: 20));
+      final doctorResponse = ListDoctorsResponse.fromJson(result);
+      return doctorResponse;
+    } catch (e) {
+      print("Error fetching doctors: $e");
+      return ListDoctorsResponse(res_code: -1, doctors: []);
+    }
+  }
+
+  Future<ListDoctorsResponse> filterDoctors(String region, String specialty) async {
+    try {
+      await clientLocal.authenticate(
+          'odoo_test', 'admin', 'admin');
+      final result = await clientLocal.callKw({
+        'model': 'hms.physician',
+        'method': 'filter_physicians',
+        'args': [region, specialty],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
       final doctorResponse = ListDoctorsResponse.fromJson(result);
