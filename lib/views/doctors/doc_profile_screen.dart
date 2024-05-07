@@ -318,7 +318,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                           btnColor: themeProvider.ateneoBlue,
                           btnWidth: double.maxFinite,
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddAptScreen()));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddAptScreen(docId: widget.docId,)));
                           }),
                     ),
                   ],

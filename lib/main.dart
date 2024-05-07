@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
+import 'package:healio/view_models/appointment_view_model.dart';
 import 'package:healio/view_models/bulletin_view_model.dart';
 import 'package:healio/view_models/doctor_view_model.dart';
 import 'package:healio/view_models/user_view_model.dart';
@@ -24,6 +25,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => BulletinViewModel()),
         ChangeNotifierProvider(create: (_) => DoctorViewModel()),
+        ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
       ],
       child: const MyApp(),
     ),

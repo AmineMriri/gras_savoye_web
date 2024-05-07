@@ -178,8 +178,8 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
       if (listDoctorsResponse.resCode == 1) {
         setState(() {
           doctorsList = listDoctorsResponse.doctors;
-          _totalPages = listDoctorsResponse.totalPages ?? 0;
-          _totalCount = listDoctorsResponse.totalCount ?? 0;
+          _totalPages = listDoctorsResponse.totalPages;
+          _totalCount = listDoctorsResponse.totalCount;
           isLoading = false;
           isError = false;
         });

@@ -26,17 +26,7 @@ class DocItem extends StatelessWidget {
             icon: Icons.schedule_rounded,
             label: 'Planifier un RDV',
             onPressed: (BuildContext context) {
-              /*CustomYesNoBottomSheet.show(
-                  context: context,
-                  themeProvider: themeProvider,
-                  appTextStyles: appTextStyles,
-                  title: "Suppression de l'annonce",
-                  onNoPressed: (){},
-                  onYesPressed: (){}
-              );*/
-              /*final tabControllerProvider = Provider.of<TabControllerProvider>(context, listen: false);
-              tabControllerProvider.setTab(2);*/
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddAptScreen()));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddAptScreen(docId: doctor.docId,)));
             },
           ),
         ],

@@ -61,7 +61,7 @@ class BulletinViewModel with ChangeNotifier {
     String fileName = type == "CV" ? '$type - 1721027.pdf' : '$type 1721027.pdf';
 
     final requestData = {
-        'bs_id': 293376,
+        'bs_id': 293376, //TODO change bs id
         'name_report': fileName,
       };
 
