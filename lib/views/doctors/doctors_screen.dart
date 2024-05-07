@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/doctor.dart';
+import 'package:number_paginator/number_paginator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helper/app_text_styles.dart';
-import '../../models/responses/doctor/list_doctors_response.dart';
 import '../../view_models/doctor_view_model.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_appbar_button.dart';
@@ -45,27 +45,36 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   ];
   String selectedRegion="";
   String selectedSpeciality="";
+  int _currentPage = 1;
+  int _totalPages = 1;
+  int _totalCount = 0;
+  final int _limitPerPage = 10;
 
   @override
   void initState() {
     super.initState();
     doctorViewModel = Provider.of<DoctorViewModel>(context, listen: false);
-    fetchDoctors();
+    fetchDoctors(1,_limitPerPage);
   }
 
-  /*Future<void> fetchDoctors(int page, int pageSize) async {
+  Future<void> fetchDoctors(int page, int pageSize) async {
     try {
       setState(() {
         isLoading = true;
         isError = false;
+        _currentPage = 1;
+        _totalPages = 1;
+        _totalCount = 0;
       });
 
       final listDoctorsResponse =
       await doctorViewModel.getDoctors(page, pageSize);
 
-      if (listDoctorsResponse.res_code == 1) {
+      if (listDoctorsResponse.resCode == 1) {
         setState(() {
           doctorsList = listDoctorsResponse.doctors;
+          _totalPages = listDoctorsResponse.totalPages ?? 0;
+          _totalCount = listDoctorsResponse.totalCount ?? 0;
           isLoading = false;
           isError = false;
         });
@@ -82,14 +91,14 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
         isError = true;
       });
     }
-  }*/
+  }
 
 
-  Future<void> fetchDoctors() async {
+  /*Future<void> fetchDoctors() async {
     try {
       //ListDoctorsResponse listDoctorsResponse=await doctorViewModel.getDoctors(2,1);
       ListDoctorsResponse listDoctorsResponse=await doctorViewModel.getDoctors();
-    switch (listDoctorsResponse.res_code) {
+    switch (listDoctorsResponse.resCode) {
         case 1:
         // retrieve bs list
           doctorsList = listDoctorsResponse.doctors;
@@ -117,81 +126,78 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
         isLoading = false;
       });
     }
-  }
+  }*/
 
   Future<void> searchDocByName(String docName) async {
     try {
       setState(() {
-        isError = false;
         isLoading = true;
+        isError = false;
+        _currentPage = 1;
+        _totalPages = 1;
+        _totalCount = 0;
       });
-      ListDoctorsResponse listDoctorsResponse=await doctorViewModel.searchDoctors(docName);
-      switch (listDoctorsResponse.res_code) {
-        case 1:
-        // retrieve bs list
+      final listDoctorsResponse = await doctorViewModel.searchDoctors(docName, 1, _limitPerPage);
+
+      if (listDoctorsResponse.resCode == 1) {
+        setState(() {
           doctorsList = listDoctorsResponse.doctors;
-          setState(() {
-            isLoading = false;
-            isError = false;
-          });
-          break;
-        case -1:
-          setState(() {
-            isError = true;
-            isLoading = false;
-          });
-          break;
-        default:
-          setState(() {
-            isError = true;
-            isLoading = false;
-          });
+          _totalPages = listDoctorsResponse.totalPages ?? 0;
+          _totalCount = listDoctorsResponse.totalCount ?? 0;
+          isLoading = false;
+          isError = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
       }
     } catch (error) {
       print("Error: $error");
       setState(() {
-        isError = true;
         isLoading = false;
+        isError = true;
       });
     }
   }
 
-  Future<void> filterDoctors(String region, String speciality) async {
+
+  Future<void> filterDoctors(String region, String specialty) async {
     try {
       setState(() {
-        isError = false;
+        searchController.text = "";
         isLoading = true;
+        isError = false;
+        _currentPage = 1;
+        _totalPages = 1;
+        _totalCount = 0;
       });
-      ListDoctorsResponse listDoctorsResponse=await doctorViewModel.filterDoctors(region, speciality);
-      switch (listDoctorsResponse.res_code) {
-        case 1:
-        // retrieve bs list
+      final listDoctorsResponse = await doctorViewModel.filterDoctors(region, specialty, 1, _limitPerPage);
+
+      if (listDoctorsResponse.resCode == 1) {
+        setState(() {
           doctorsList = listDoctorsResponse.doctors;
-          setState(() {
-            isLoading = false;
-            isError = false;
-          });
-          break;
-        case -1:
-          setState(() {
-            isError = true;
-            isLoading = false;
-          });
-          break;
-        default:
-          setState(() {
-            isError = true;
-            isLoading = false;
-          });
+          _totalPages = listDoctorsResponse.totalPages ?? 0;
+          _totalCount = listDoctorsResponse.totalCount ?? 0;
+          isLoading = false;
+          isError = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
       }
     } catch (error) {
       print("Error: $error");
       setState(() {
-        isError = true;
         isLoading = false;
+        isError = true;
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +279,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                         ),
                       ),
                       Text(
-                        "Résultat: ${doctorsList.length} Médecins",
+                        "Résultat: $_totalCount Médecins",
                         style: appTextStyles.ateneoBlueMedium12,
                       ),
                     ],
@@ -321,6 +327,31 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                 ],
               ),
             ),
+            if(_totalPages>1)
+              Card(
+                margin: EdgeInsets.zero,
+                color: themeProvider.ghostWhite,
+                child: NumberPaginator(
+                  numberPages: _totalPages,
+                  onPageChange: (int index) {
+                    setState(() {
+                      _currentPage = index + 1;
+                    });
+                    // Call appropriate method based on current search/filter state
+                    if (selectedRegion.isNotEmpty && selectedSpeciality.isNotEmpty) {
+                      filterDoctors(selectedRegion, selectedSpeciality);
+                    } else if (searchController.text.isNotEmpty) {
+                      searchDocByName(searchController.text);
+                    } else {
+                      fetchDoctors(_currentPage, _limitPerPage);
+                    }
+                  },
+                  config: NumberPaginatorUIConfig(
+                    buttonSelectedBackgroundColor: themeProvider.ateneoBlue,
+                    buttonUnselectedForegroundColor: themeProvider.ateneoBlue,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -328,13 +359,17 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   }
 
   Future<void> refresh() async {
-    searchController.text="";
-    setState(() {
-      isLoading = true;
-      isError = false;
-    });
-    await fetchDoctors();
+    searchController.text = "";
+    // Call appropriate method based on current search/filter state
+    if (selectedRegion.isNotEmpty && selectedSpeciality.isNotEmpty) {
+      filterDoctors(selectedRegion, selectedSpeciality);
+    } else if (searchController.text.isNotEmpty) {
+      searchDocByName(searchController.text);
+    } else {
+      fetchDoctors(1, _limitPerPage);
+    }
   }
+
 
   void performLogout() async {
     final prefs = await SharedPreferences.getInstance();

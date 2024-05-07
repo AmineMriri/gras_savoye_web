@@ -22,77 +22,78 @@ class DoctorViewModel with ChangeNotifier {
       print("Error fetching doctors: $e");
       return ListDoctorsResponse(res_code: -1, doctors: []);
     }
-  }
+  }*/
 
 
   Future<ListDoctorsResponse> getDoctors(int page, int pageSize) async {
     try {
       await clientLocal.authenticate('odoo_test', 'admin', 'admin');
+      final requestData = {
+        'page': page,
+        'page_size': pageSize,
+      };
+      print(requestData);
       final result = await clientLocal.callKw({
         'model': 'hms.physician',
         'method': 'get_physician_list',
-        'args': [page, pageSize],
+        'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
+      print('API Response: $result');
       final doctorResponse = ListDoctorsResponse.fromJson(result);
       return doctorResponse;
     } catch (e) {
       print("Error fetching doctors: $e");
-      return ListDoctorsResponse(res_code: -1, doctors: []);
-    }
-  }*/
-
-  Future<ListDoctorsResponse> getDoctors() async {
-    try {
-      await clientLocal.authenticate(
-          'odoo_test', 'admin', 'admin');
-      final result = await clientLocal.callKw({
-        'model': 'hms.physician',
-        'method': 'get_physician_list',
-        'args': [],
-        'kwargs': {},
-      }).timeout(const Duration(seconds: 20));
-      final doctorResponse = ListDoctorsResponse.fromJson(result);
-      return doctorResponse;
-    } catch (e) {
-      print("Error fetching doctors: $e");
-      return ListDoctorsResponse(res_code: -1, doctors: []);
+      return ListDoctorsResponse(resCode: -1, doctors: [], totalPages: 0, totalCount: 0);
     }
   }
 
-  Future<ListDoctorsResponse> searchDoctors(String docName) async {
+  Future<ListDoctorsResponse> searchDoctors(String docName, int page, int pageSize) async {
     try {
       await clientLocal.authenticate(
           'odoo_test', 'admin', 'admin');
+      final requestData = {
+        'page': page,
+        'page_size': pageSize,
+        'name': docName,
+      };
       final result = await clientLocal.callKw({
         'model': 'hms.physician',
         'method': 'search_physicians_by_name',
-        'args': [docName],
+        'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
+      print('API Response: $result');
       final doctorResponse = ListDoctorsResponse.fromJson(result);
       return doctorResponse;
     } catch (e) {
       print("Error fetching doctors: $e");
-      return ListDoctorsResponse(res_code: -1, doctors: []);
+      return ListDoctorsResponse(resCode: -1, doctors: [], totalPages: 0, totalCount: 0);
     }
   }
 
-  Future<ListDoctorsResponse> filterDoctors(String region, String specialty) async {
+  Future<ListDoctorsResponse> filterDoctors(String region, String specialty, int page, int pageSize) async {
     try {
       await clientLocal.authenticate(
           'odoo_test', 'admin', 'admin');
+      final requestData = {
+        'page': page,
+        'page_size': pageSize,
+        'region': region,
+        'specialty': specialty,
+      };
       final result = await clientLocal.callKw({
         'model': 'hms.physician',
         'method': 'filter_physicians',
-        'args': [region, specialty],
+        'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
+      print('API Response: $result');
       final doctorResponse = ListDoctorsResponse.fromJson(result);
       return doctorResponse;
     } catch (e) {
       print("Error fetching doctors: $e");
-      return ListDoctorsResponse(res_code: -1, doctors: []);
+      return ListDoctorsResponse(resCode: -1, doctors: [], totalPages: 0, totalCount: 0);
     }
   }
 
