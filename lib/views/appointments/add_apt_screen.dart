@@ -29,20 +29,6 @@ class AddAptScreen extends StatefulWidget {
 
 class _AddAptScreenState extends State<AddAptScreen> {
 
-  List<String> specialitiesList = [
-    'Généraliste',
-    'ORL',
-    'Dentiste',
-    'Radiologue',
-  ];
-
-  List<String> regionsList = [
-    'Ariana',
-    'Tunis',
-    'Bizerte',
-    'Nabeul',
-  ];
-
   List<String> patientsList = [
     'Ahmed',
     'Yassine',
@@ -50,17 +36,12 @@ class _AddAptScreenState extends State<AddAptScreen> {
     'Sarah',
   ];
 
-  List<String> docsList = [
-    'Dr X',
-    'Dr Y',
-    'Dr Z',
-  ];
-
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   late AppointmentViewModel appointmentViewModel;
   bool isLoadingDays = true;
+  bool isSlotsHidden = true;
   bool isLoadingSlots = false;
   bool isErrorDays = false;
   List<dynamic> dates=[];
@@ -82,6 +63,17 @@ class _AddAptScreenState extends State<AddAptScreen> {
         setState(() {
           dates=avDatesResponse.dates;
           print(dates);
+          print(_selectedDay);
+          bool isSelectedDayAvailable = dates.any((date) {
+            DateTime parsedDate = DateTime.parse(date);
+            return parsedDate.year == _selectedDay.year &&
+                parsedDate.month == _selectedDay.month &&
+                parsedDate.day == _selectedDay.day;
+          });
+          print(isSelectedDayAvailable);
+          if(isSelectedDayAvailable){
+            fetchTimeSlots(_selectedDay);
+          }
           isLoadingDays = false;
           isErrorDays = false;
         });
@@ -109,6 +101,10 @@ class _AddAptScreenState extends State<AddAptScreen> {
 
   Future<void> fetchTimeSlots(DateTime selectedDay) async {
     try {
+      setState(() {
+        isLoadingSlots = true;
+        isSlotsHidden = false;
+      });
       AvTimeSlotsResponse avTimeSlotsResponse=await appointmentViewModel.getAvailableTimeSlots(widget.docId, selectedDay);
 
       if (avTimeSlotsResponse.resCode == 1) {
@@ -116,28 +112,24 @@ class _AddAptScreenState extends State<AddAptScreen> {
         setState(() {
           slots=avTimeSlotsResponse.slots;
           print(slots);
-          /*isLoadingDays = false;
-          isErrorDays = false;*/
+          isLoadingSlots = false;
         });
       } else if (avTimeSlotsResponse.resCode == -1) {
         print("list is empty"); //TODO do something here
-        /*setState(() {
-          isLoadingDays = false;
-          isErrorDays = false;
-        });*/
+        setState(() {
+          isLoadingSlots = false;
+        });
       } else {
         print("error when getting list of time slots");
-        /*setState(() {
-          isLoadingDays = false;
-          isErrorDays = true;
-        });*/
+        setState(() {
+          isLoadingSlots = false;
+        });
       }
     } catch (error) {
       print("Error: $error");
-      /*setState(() {
-        isLoadingDays = false;
-        isErrorDays = true;
-      });*/
+      setState(() {
+        isLoadingSlots = false;
+      });
     }
   }
 
@@ -279,14 +271,24 @@ class _AddAptScreenState extends State<AddAptScreen> {
                         const SizedBox(
                           height: 30,
                         ),
-                        Text(
-                          "Sélectionnez un créneau",
-                          style: appTextStyles.onyxSemiBold16,
-                        ),
-                        const SizedBox(height: 15),
-                        _buildTimeList(themeProvider, appTextStyles, width),
-                        const SizedBox(
-                          height: 15,
+                        isSlotsHidden ? Container() :
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Sélectionnez un créneau",
+                              style: appTextStyles.onyxSemiBold16,
+                            ),
+                            const SizedBox(height: 15),
+                            isLoadingSlots ? Container(
+                              margin: const EdgeInsets.only(bottom: 30),
+                              alignment: Alignment.center,
+                              child: const CircularProgressIndicator(),
+                            ) : _buildTimeList(themeProvider, appTextStyles, width),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                          ],
                         ),
                         Text("Saisissez le motif du RDV",
                             style: appTextStyles.onyxSemiBold16),
@@ -416,11 +418,10 @@ class _AddAptScreenState extends State<AddAptScreen> {
 
   int selectedIndex = -1;
   String _selectedTime = "";
-  List<dynamic> slotsList = List.generate(2, (index) => "${index + 8}:00");
 
   Widget _buildTimeList(
       ThemeProvider themeProvider, AppTextStyles appTextStyles, double width) {
-    int count = slotsList.length;
+    int count = slots.length;
     const int itemsPerRow = 3;
     const double ratio = 100 / 45;
     const double horizontalPadding = 0;
@@ -437,7 +438,7 @@ class _AddAptScreenState extends State<AddAptScreen> {
           crossAxisSpacing: 10.0, // Spacing between columns
           childAspectRatio: ratio, // Adjust aspect ratio of each grid item
         ),
-        itemCount: slotsList.length,
+        itemCount: slots.length,
         itemBuilder: (context, index) {
           bool isSelected = selectedIndex == index;
 
@@ -445,7 +446,7 @@ class _AddAptScreenState extends State<AddAptScreen> {
             onTap: () {
               setState(() {
                 selectedIndex = index;
-                _selectedTime = slotsList[selectedIndex];
+                _selectedTime = slots[selectedIndex];
               });
             },
             child: Container(
@@ -455,7 +456,7 @@ class _AddAptScreenState extends State<AddAptScreen> {
               ),
               child: Center(
                 child: Text(
-                  slotsList[index],
+                  slots[index],
                   style: isSelected
                       ? appTextStyles.bubblesSemiBold14
                       : appTextStyles.ateneoBlueSemiBold14,
@@ -513,24 +514,20 @@ class _AddAptScreenState extends State<AddAptScreen> {
         outsideDaysVisible: false,
       ),
       calendarFormat: _calendarFormat,
-      focusedDay: _focusedDay,
-      firstDay: DateTime.now(),
-      lastDay: DateTime.now().add(const Duration(days: 365)),
       selectedDayPredicate: (day) {
         return isSameDay(_selectedDay, day);
       },
+
+      focusedDay: _focusedDay,
+      firstDay: DateTime.now(),
+      lastDay: DateTime.now().add(const Duration(days: 365)),
       onDaySelected: (selectedDay, focusedDay) {
         setState(() {
-          //slotsList = [];
           _selectedTime = "";
           selectedIndex = -1;
-          //isLoadingAv = true;
           _selectedDay = selectedDay;
           _focusedDay = focusedDay;
-          print(selectedDay);
           fetchTimeSlots(selectedDay);
-          //_fetchAvailabilities(DateFormat('yyyy-MM-dd')
-          //.format(_selectedDay));
         });
       },
     );

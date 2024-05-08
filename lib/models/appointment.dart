@@ -9,6 +9,7 @@ class Appointment {
   final String time;
   final FamilyMember? familyMember;
   final String motif;
+  final String state;
   final String? cancelReason;
 
   Appointment({
@@ -18,6 +19,7 @@ class Appointment {
     required this.time,
     this.familyMember,
     required this.motif,
+    required this.state,
     this.cancelReason,
   });
 
@@ -29,11 +31,12 @@ class Appointment {
       time: json['time'],
       familyMember: json['patient'] == false ? null : json['patient'],
       motif: json['motif'],
+      state: json['state'],
       cancelReason: json['cancel_reason'] == false ? null : json['cancel_reason'],
     );
   }
   @override
   String toString() {
-    return 'Appointment{aptId: $aptId, doctor: $doctor, date: $date, time: $time, familyMember: $familyMember, motif: $motif}';
+    return 'Appointment{aptId: $aptId, doctor: $doctor, date: $date, time: $time, familyMember: $familyMember, motif: $motif, state: $state}';
   }
 }

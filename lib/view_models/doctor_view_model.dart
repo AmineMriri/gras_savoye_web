@@ -5,7 +5,7 @@ import '../models/responses/doctor/details_doctor_reponse.dart';
 import '../models/responses/doctor/list_doctors_response.dart';
 
 class DoctorViewModel with ChangeNotifier {
-  OdooClient clientLocal = OdooClient('http://192.168.2.80:8069/');
+  OdooClient clientLocal = OdooClient('http://192.168.1.14:8069/');
 
   /*Future<ListDoctorsResponse> getDoctors(int page, int pageSize) async {
     try {
