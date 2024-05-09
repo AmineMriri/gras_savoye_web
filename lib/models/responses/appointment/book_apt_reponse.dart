@@ -1,13 +1,13 @@
 import '../../appointment.dart';
 
-class BookAptResponse {
+class AptResponse {
   final int resCode;
   final Appointment? appointment;
 
-  BookAptResponse({required this.resCode, this.appointment});
+  AptResponse({required this.resCode, this.appointment});
 
-  factory BookAptResponse.fromJson(Map<String, dynamic> json) {
-    return BookAptResponse(
+  factory AptResponse.fromJson(Map<String, dynamic> json) {
+    return AptResponse(
       resCode: int.parse(json['res_code'].toString()),
       appointment: json['appointment']==null ? null : Appointment.fromJson(json['appointment']),
     );

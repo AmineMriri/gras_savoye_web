@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:healio/helper/providers/tab_provider.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/doctor.dart';
 import 'package:number_paginator/number_paginator.dart';
@@ -8,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helper/app_text_styles.dart';
 import '../../view_models/doctor_view_model.dart';
+import '../../view_models/user_view_model.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_appbar_button.dart';
 import '../../widgets/custom_search_dropdown_button.dart';
@@ -27,6 +29,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   late ThemeProvider themeProvider;
   late AppTextStyles appTextStyles;
   late DoctorViewModel doctorViewModel;
+  late UserViewModel userViewModel;
   List<Doctor> doctorsList = [];
   bool isLoading = true;
   bool isError = false;
@@ -54,6 +57,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   void initState() {
     super.initState();
     doctorViewModel = Provider.of<DoctorViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     fetchDoctors(1,_limitPerPage);
   }
 
@@ -216,7 +220,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
             themeProvider: themeProvider,
             isTransform: true,
             onPressed: () {
-              performLogout();
+              userViewModel.performLogout(context);
             },
           ),
           themeProvider: themeProvider,
@@ -368,19 +372,5 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
     } else {
       fetchDoctors(1, _limitPerPage);
     }
-  }
-
-
-  void performLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return const SignInScreen();
-        },
-      ),
-          (_) => false,
-    );
   }
 }

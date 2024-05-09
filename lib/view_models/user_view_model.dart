@@ -5,8 +5,12 @@ import 'package:healio/models/responses/user/forgot_pwd_response.dart';
 import 'package:odoo_rpc/odoo_rpc.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart' hide Key;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helper/config.dart';
+import '../helper/providers/tab_provider.dart';
+import '../views/auth/sign_in_screen.dart';
 
 class UserViewModel with ChangeNotifier {
 
@@ -100,6 +104,21 @@ class UserViewModel with ChangeNotifier {
     final encrypter = Encrypter(AES(key, mode: AESMode.ecb));
     final encrypted = encrypter.encrypt(pwd);
     return encrypted.base64;
+  }
+
+  void performLogout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return const SignInScreen();
+        },
+      ),
+          (_) => false,
+    );
+    final tabProvider = Provider.of<TabProvider>(context, listen: false);
+    tabProvider.setTab(0);
   }
 
 

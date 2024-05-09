@@ -5,6 +5,7 @@ import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
 import 'package:healio/models/responses/bulletin/list_bulletins_response.dart';
 import 'package:healio/view_models/bulletin_view_model.dart';
+import 'package:healio/view_models/user_view_model.dart';
 import 'package:healio/views/auth/sign_in_screen.dart';
 import 'package:healio/views/bulletins/attach_bulletin_screen.dart';
 import 'package:healio/views/bulletins/bulletin_list.dart';
@@ -13,6 +14,7 @@ import 'package:healio/widgets/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/app_text_styles.dart';
+import '../../helper/providers/tab_provider.dart';
 import '../../models/responses/user/login_response.dart';
 import '../../widgets/custom_appbar_button.dart';
 import '../../widgets/error_display_and_refresh.dart';
@@ -37,6 +39,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
   bool? hasParents;
   List<Widget> tabs = [];
   late BulletinViewModel bulletinViewModel;
+  late UserViewModel userViewModel;
   List<Bulletin> bsList = [];
   List<Bulletin> bsListAdherent = [];
   List<Bulletin> bsListConjoint = [];
@@ -56,6 +59,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
   void initState() {
     super.initState();
     bulletinViewModel = Provider.of<BulletinViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _userDataFuture = initializeUserData();
   }
 
@@ -97,7 +101,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
             themeProvider: themeProvider,
             isTransform: true,
             onPressed: () {
-              performLogout();
+              userViewModel.performLogout(context);
             },
           ),
           themeProvider: themeProvider,
@@ -362,19 +366,6 @@ class _BulletinsScreenState extends State<BulletinsScreen>
       ));
     }
     return tabs;
-  }
-
-  void performLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return const SignInScreen();
-        },
-      ),
-      (_) => false,
-    );
   }
 
   Future<void> refreshLists() async {

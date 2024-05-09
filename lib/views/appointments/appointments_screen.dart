@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/views/appointments/appointments_list.dart';
 import 'package:healio/widgets/custom_app_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../helper/providers/tab_provider.dart';
+import '../../view_models/user_view_model.dart';
 import '../../widgets/custom_appbar_button.dart';
 import '../auth/sign_in_screen.dart';
 import 'apt_archive_screen.dart';
@@ -17,6 +20,7 @@ class AppointmentsScreen extends StatefulWidget {
 class _AppointmentsScreenState extends State<AppointmentsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late UserViewModel userViewModel;
 
   double fontSizeRatio = 0;
 
@@ -24,6 +28,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
   }
 
   @override
@@ -42,7 +47,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
             themeProvider: themeProvider,
             isTransform: true,
             onPressed: () {
-              performLogout();
+              userViewModel.performLogout(context);
             },
           ),
           themeProvider: themeProvider,
@@ -75,19 +80,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
           ],
         ),
       ),
-    );
-  }
-
-  void performLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return const SignInScreen();
-        },
-      ),
-      (_) => false,
     );
   }
 }

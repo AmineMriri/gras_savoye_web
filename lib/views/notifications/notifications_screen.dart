@@ -1,7 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../helper/providers/tab_provider.dart';
 import '../../helper/providers/theme_provider.dart';
+import '../../view_models/user_view_model.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_appbar_button.dart';
 import '../auth/sign_in_screen.dart';
@@ -15,6 +18,13 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  late UserViewModel userViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+  }
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.themeProvider;
@@ -32,7 +42,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             themeProvider: themeProvider,
             isTransform: true,
             onPressed: () {
-              performLogout();
+              userViewModel.performLogout(context);
             },
           ),
           /*onLogout: () {
@@ -56,18 +66,5 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   bool generateRandomBool() {
     Random random = Random();
     return random.nextBool();
-  }
-
-  void performLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return const SignInScreen();
-        },
-      ),
-          (_) => false,
-    );
   }
 }

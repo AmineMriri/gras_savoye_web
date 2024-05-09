@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/widgets/custom_card.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/app_text_styles.dart';
 import '../../helper/date_utils.dart';
+import '../../helper/providers/tab_provider.dart';
 import '../../models/responses/user/get_profile_response.dart';
 import '../../view_models/user_view_model.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_appbar_button.dart';
-import 'package:intl/intl.dart';
 
 import '../../widgets/error_display_and_refresh.dart';
 import '../auth/sign_in_screen.dart';
@@ -79,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               themeProvider: themeProvider,
               isTransform: true,
               onPressed: () {
-                performLogout();
+                userViewModel.performLogout(context);
               },
             ),
             themeProvider: themeProvider,
@@ -385,19 +384,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     // Return the calculated age
     return age;
-  }
-
-  void performLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return const SignInScreen();
-        },
-      ),
-          (_) => false,
-    );
   }
 
 }
