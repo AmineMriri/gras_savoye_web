@@ -78,15 +78,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                       width: 200),
                                 ),
                                 const SizedBox(
-                                  height: 36,
-                                ),
-                                Text(
-                                  "Portail Adhérent",
-                                  textAlign: TextAlign.center,
-                                  style: appTextStyles.onyxBold24,
-                                ),
-                                const SizedBox(
-                                  height: 10,
+                                  height: 20,
                                 ),
                                 Text(
                                   "Veuillez vous connecter",
@@ -96,7 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               ],
                             ),
                             const SizedBox(
-                              height: 36,
+                              height: 40,
                             ),
 
                             ///TEXT FIELDS
