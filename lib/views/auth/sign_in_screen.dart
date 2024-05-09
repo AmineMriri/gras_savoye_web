@@ -78,7 +78,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                       width: 200),
                                 ),
                                 const SizedBox(
-                                  height: 20,
+                                  height: 36,
                                 ),
                                 Text(
                                   "Veuillez vous connecter",
@@ -88,7 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               ],
                             ),
                             const SizedBox(
-                              height: 40,
+                              height: 36,
                             ),
 
                             ///TEXT FIELDS

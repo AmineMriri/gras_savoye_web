@@ -82,7 +82,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
                                 Image.asset("assets/images/app_icon.png", width: 200),
                           ),
                           const SizedBox(
-                            height: 20,
+                            height: 36,
                           ),
                           Text(
                             "Ne vous inquiétez pas, nous vous aiderons à vous connecter",
@@ -90,7 +90,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
                             style: appTextStyles.graniteGreyRegular16,
                           ),
                           const SizedBox(
-                            height: 40,
+                            height: 36,
                           ),
 
                           ///TEXT FIELD
