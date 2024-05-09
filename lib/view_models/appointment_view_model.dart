@@ -3,16 +3,19 @@ import 'package:healio/models/responses/appointment/av_dates_response.dart';
 import 'package:healio/models/responses/appointment/av_time_slots_response.dart';
 import 'package:odoo_rpc/odoo_rpc.dart';
 
+import '../helper/config.dart';
 import '../models/responses/appointment/book_apt_reponse.dart';
 import '../models/responses/doctor/details_doctor_reponse.dart';
 import '../models/responses/doctor/list_doctors_response.dart';
 
 class AppointmentViewModel with ChangeNotifier {
-  OdooClient clientLocal = OdooClient('http://192.168.1.14:8069/');
+  OdooClient clientLocal = OdooClient(AppConfig.localServerUrl);
+  String dbName='odoo_test';
 
   Future<AvDatesResponse> getAvailableDatesForPhysician(int physicianId) async {
     try {
-      await clientLocal.authenticate('odoo_test', 'admin', 'admin');
+      await clientLocal.authenticate(
+          dbName, AppConfig.localDbUsername, AppConfig.localDbPassword);
       final requestData = {
         'physician_id': physicianId,
       };
@@ -32,7 +35,8 @@ class AppointmentViewModel with ChangeNotifier {
 
   Future<AvTimeSlotsResponse> getAvailableTimeSlots(int physicianId, DateTime date) async {
     try {
-      await clientLocal.authenticate('odoo_test', 'admin', 'admin');
+      await clientLocal.authenticate(
+          dbName, AppConfig.localDbUsername, AppConfig.localDbPassword);
       final requestData = {
         'physician_id': physicianId,
         'date_str': date.toString(),
@@ -53,7 +57,8 @@ class AppointmentViewModel with ChangeNotifier {
 
   Future<BookAptResponse> bookApt(int docId, String patient, DateTime date, String motif) async {
     try {
-      await clientLocal.authenticate('odoo_test', 'admin', 'admin');
+      await clientLocal.authenticate(
+          dbName, AppConfig.localDbUsername, AppConfig.localDbPassword);
       final requestData = {
         'doc_id': docId,
         'patient': patient,

@@ -4,15 +4,17 @@ import 'dart:io';
 import 'package:flutter/material.dart' hide Key;
 import 'package:healio/models/responses/bulletin/details_bulletin_reponse.dart';
 import 'package:odoo_rpc/odoo_rpc.dart';
+import '../helper/config.dart';
 import '../models/responses/bulletin/list_bulletins_response.dart';
 
 class BulletinViewModel with ChangeNotifier {
-  OdooClient client = OdooClient('http://vps-015df9c1.vps.ovh.net:8079/');
+  OdooClient client = OdooClient(AppConfig.serverUrl);
+  String dbName='backoffice_Gras_2';
 
   Future<ListBulletinsResponse> getBulletins(String userId) async {
     try {
       await client.authenticate(
-          'backoffice_Gras_2', 'testportail@test.com', '%ZmYcp^No~1`!7H01T');
+          dbName, AppConfig.dbUsername, AppConfig.dbPassword);
       final requestData = {
         'adherent_id': userId,
       };
@@ -35,7 +37,7 @@ class BulletinViewModel with ChangeNotifier {
   Future<DetailsBulletinResponse> getBulletinDetails(int bsId) async {
     try {
       await client.authenticate(
-          'backoffice_Gras_2', 'testportail@test.com', '%ZmYcp^No~1`!7H01T');
+          dbName, AppConfig.dbUsername, AppConfig.dbPassword);
       final requestData = {
         'bs_id': bsId,
       };
@@ -55,8 +57,8 @@ class BulletinViewModel with ChangeNotifier {
 
   Future<File> getBsDocument(int bsId, String bsNum, String type) async {
     try {
-    await client.authenticate(
-          'backoffice_Gras_2', 'testportail@test.com', '%ZmYcp^No~1`!7H01T');
+      await client.authenticate(
+          dbName, AppConfig.dbUsername, AppConfig.dbPassword);
       //String fileName = type == "CV" ? '$type - $bsNum.pdf' : '$type $bsNum.pdf';
     String fileName = type == "CV" ? '$type - 1721027.pdf' : '$type 1721027.pdf';
 

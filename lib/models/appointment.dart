@@ -1,10 +1,9 @@
 import 'package:healio/models/family_member.dart';
-
 import 'doctor.dart';
 
 class Appointment {
   final int aptId;
-  final Doctor doctor;
+  final Doctor? doctor;
   final String date;
   final String time;
   final FamilyMember? familyMember;
@@ -14,7 +13,7 @@ class Appointment {
 
   Appointment({
     required this.aptId,
-    required this.doctor,
+    this.doctor,
     required this.date,
     required this.time,
     this.familyMember,
@@ -26,7 +25,7 @@ class Appointment {
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
       aptId: json['apt_id'],
-      doctor: json['doctor'] as Doctor,
+      doctor: json['doctor'] == false ? null : json['doctor'] as Doctor,
       date: json['date'],
       time: json['time'],
       familyMember: json['patient'] == false ? null : json['patient'],

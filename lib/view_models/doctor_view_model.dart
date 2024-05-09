@@ -1,45 +1,28 @@
 import 'package:flutter/material.dart' hide Key;
 import 'package:odoo_rpc/odoo_rpc.dart';
 
+import '../helper/config.dart';
 import '../models/responses/doctor/details_doctor_reponse.dart';
 import '../models/responses/doctor/list_doctors_response.dart';
 
 class DoctorViewModel with ChangeNotifier {
-  OdooClient clientLocal = OdooClient('http://192.168.1.14:8069/');
-
-  /*Future<ListDoctorsResponse> getDoctors(int page, int pageSize) async {
-    try {
-      await clientLocal.authenticate('odoo_test', 'admin', 'admin');
-      final result = await clientLocal.callKw({
-        'model': 'hms.physician',
-        'method': 'get_physician_list',
-        'args': [page, pageSize],
-        'kwargs': {},
-      }).timeout(const Duration(seconds: 20));
-      final doctorResponse = ListDoctorsResponse.fromJson(result);
-      return doctorResponse;
-    } catch (e) {
-      print("Error fetching doctors: $e");
-      return ListDoctorsResponse(res_code: -1, doctors: []);
-    }
-  }*/
-
+  OdooClient clientLocal = OdooClient(AppConfig.localServerUrl);
+  String dbName='odoo_test';
 
   Future<ListDoctorsResponse> getDoctors(int page, int pageSize) async {
     try {
-      await clientLocal.authenticate('odoo_test', 'admin', 'admin');
+      await clientLocal.authenticate(
+          dbName, AppConfig.localDbUsername, AppConfig.localDbPassword);
       final requestData = {
         'page': page,
         'page_size': pageSize,
       };
-      print(requestData);
       final result = await clientLocal.callKw({
         'model': 'hms.physician',
         'method': 'get_physician_list',
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
-      print('API Response: $result');
       final doctorResponse = ListDoctorsResponse.fromJson(result);
       return doctorResponse;
     } catch (e) {
@@ -51,7 +34,7 @@ class DoctorViewModel with ChangeNotifier {
   Future<ListDoctorsResponse> searchDoctors(String docName, int page, int pageSize) async {
     try {
       await clientLocal.authenticate(
-          'odoo_test', 'admin', 'admin');
+          dbName, AppConfig.localDbUsername, AppConfig.localDbPassword);
       final requestData = {
         'page': page,
         'page_size': pageSize,
@@ -63,7 +46,6 @@ class DoctorViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
-      print('API Response: $result');
       final doctorResponse = ListDoctorsResponse.fromJson(result);
       return doctorResponse;
     } catch (e) {
@@ -75,7 +57,7 @@ class DoctorViewModel with ChangeNotifier {
   Future<ListDoctorsResponse> filterDoctors(String region, String specialty, int page, int pageSize) async {
     try {
       await clientLocal.authenticate(
-          'odoo_test', 'admin', 'admin');
+          dbName, AppConfig.localDbUsername, AppConfig.localDbPassword);
       final requestData = {
         'page': page,
         'page_size': pageSize,
@@ -88,7 +70,6 @@ class DoctorViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
-      print('API Response: $result');
       final doctorResponse = ListDoctorsResponse.fromJson(result);
       return doctorResponse;
     } catch (e) {
@@ -100,6 +81,8 @@ class DoctorViewModel with ChangeNotifier {
 
   Future<DetailsDoctorResponse> getDoctorDetails(int physicianId) async {
     try {
+      await clientLocal.authenticate(
+          dbName, AppConfig.localDbUsername, AppConfig.localDbPassword);
       final requestData = {
         'id': physicianId,
       };

@@ -6,14 +6,17 @@ import 'package:odoo_rpc/odoo_rpc.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart' hide Key;
 
+import '../helper/config.dart';
+
 class UserViewModel with ChangeNotifier {
 
-  OdooClient client = OdooClient('http://vps-015df9c1.vps.ovh.net:8079/');
+  OdooClient client = OdooClient(AppConfig.serverUrl);
+  String dbName='backoffice_Gras_2';
 
   Future<LoginResponse> signIn(String login, String password) async {
     try {
       await client.authenticate(
-          'backoffice_Gras_2', 'testportail@test.com', '%ZmYcp^No~1`!7H01T');
+          dbName, AppConfig.dbUsername, AppConfig.dbPassword);
       final requestData = {
         'db_name':'Gras Savoye', //Wecover  -- Gras Savoye
         'login': login.toLowerCase().trim(),
@@ -25,7 +28,6 @@ class UserViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
-
       final jsonResponse = result;
       final loginResponse = LoginResponse.fromJson(jsonResponse);
       return loginResponse;
@@ -42,7 +44,7 @@ class UserViewModel with ChangeNotifier {
   Future<ForgotPwdResponse> forgotPwd(String login) async {
     try {
       await client.authenticate(
-          'backoffice_Gras_2', 'testportail@test.com', '%ZmYcp^No~1`!7H01T');
+          dbName, AppConfig.dbUsername, AppConfig.dbPassword);
       final requestData = {
         'db_name':'Gras Savoye', //Wecover  -- Gras Savoye
         'login': login.toLowerCase().trim(),
@@ -70,7 +72,7 @@ class UserViewModel with ChangeNotifier {
   Future<GetProfileResponse> getProfile(int userId) async {
     try {
       await client.authenticate(
-          'backoffice_Gras_2', 'testportail@test.com', '%ZmYcp^No~1`!7H01T');
+          dbName, AppConfig.dbUsername, AppConfig.dbPassword);
       final requestData = {
         'adherent_id': userId,
       };

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
+import 'package:healio/models/appointment.dart';
 import 'package:healio/models/doctor.dart';
 import 'package:healio/models/responses/appointment/av_dates_response.dart';
 import 'package:healio/models/responses/appointment/av_time_slots_response.dart';
@@ -37,8 +38,12 @@ class _AddAptScreenState extends State<AddAptScreen> {
   ];
 
   final CalendarFormat _calendarFormat = CalendarFormat.month;
+  String _selectedPatient="";
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
+  int selectedSlotIndex = -1;
+  String _selectedTime = "";
+  String _motif="";
   late AppointmentViewModel appointmentViewModel;
   bool isLoadingDays = true;
   bool isSlotsHidden = true;
@@ -46,6 +51,9 @@ class _AddAptScreenState extends State<AddAptScreen> {
   bool isErrorDays = false;
   List<dynamic> dates=[];
   List<dynamic> slots=[];
+  bool _selectedPatientError=false;
+  bool _selectedDayError=false;
+  bool _selectedTimeError=false;
 
   @override
   void initState() {
@@ -132,6 +140,7 @@ class _AddAptScreenState extends State<AddAptScreen> {
       });
     }
   }
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -174,160 +183,117 @@ class _AddAptScreenState extends State<AddAptScreen> {
                 SingleChildScrollView(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        CustomSearchDropdown(
-                          list: patientsList,
-                          themeProvider: themeProvider,
-                          appTextStyles: appTextStyles,
-                          hint: 'Choisissez le patient',
-                          notFoundString: 'Aucun',
-                          onValueChanged: (selectedValue) {
-                            print('Selected patient value: $selectedValue');
-                          },
-                        ),
-                        /*Container(
-                              margin: const EdgeInsets.fromLTRB(35, 5, 25, 0),
-                              child:
-                              TextFormField(
-                                //controller: messageController,
-                                style: appTextStyles.greyLight13,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 5,
-                                maxLength: 3000,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Le message ne doit pas être vide";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(
-                                        color: themeProvider.lightSilver,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(
-                                        color: themeProvider.red,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    errorStyle: appTextStyles.redLight13,
-                                    hintText: 'Saisissez le motif du RDV ...',
-                                    hintStyle: appTextStyles.cadetGreyLight13,
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                ),
-                              ),
-                            ),*/
-                        /*const SizedBox(
-                              height: 15,
-                            ),
-                            //SEARCH ICON CONTAINER
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Container(
-                                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  color: themeProvider.ateneoBlue,
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.search_rounded,
-                                    color: themeProvider.bubbles,
-                                  ),
-                                  onPressed: ()=>null,
-                                ),
-                              ),
-                            ),*/
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Text("Sélectionnez une date",
-                            style: appTextStyles.onyxSemiBold16),
-                        const SizedBox(height: 10),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 15,
                           ),
-                          child: calendar(themeProvider, appTextStyles),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        isSlotsHidden ? Container() :
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Sélectionnez un créneau",
-                              style: appTextStyles.onyxSemiBold16,
+                          CustomSearchDropdown(
+                            list: patientsList,
+                            themeProvider: themeProvider,
+                            appTextStyles: appTextStyles,
+                            hint: 'Choisissez le patient',
+                            notFoundString: 'Aucun',
+                            onValueChanged: (selectedValue) {
+                              _selectedPatient=selectedValue;
+                              setState(() {
+                                _selectedPatientError=false;
+                              });
+                              print('Selected patient value: $_selectedPatient');
+                            },
+                          ),
+                          errorWidget(appTextStyles, "Veuillez sélectionner le patient", _selectedPatientError),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Text("Sélectionnez une date",
+                              style: appTextStyles.onyxSemiBold16),
+                          const SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            const SizedBox(height: 15),
-                            isLoadingSlots ? Container(
-                              margin: const EdgeInsets.only(bottom: 30),
-                              alignment: Alignment.center,
-                              child: const CircularProgressIndicator(),
-                            ) : _buildTimeList(themeProvider, appTextStyles, width),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                          ],
-                        ),
-                        Text("Saisissez le motif du RDV",
-                            style: appTextStyles.onyxSemiBold16),
-                        const SizedBox(height: 10),
-                        CustomMultilineTextField(
-                          themeProvider: themeProvider,
-                          textInputAction: TextInputAction.next,
-                          hint: 'Exemple: "bilan de santé annuel"',
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Le motif ne doit pas être vide";
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: (value){
-                            print(value);
-                          },
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        ///BUTTON
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomElevatedButton(
-                                  txt: "Confirmer",
-                                  txtStyle: appTextStyles.whiteSemiBold16,
-                                  btnColor: themeProvider.ateneoBlue,
-                                  btnWidth: double.maxFinite,
-                                  onPressed: () => null),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                      ],
+                            child: calendar(themeProvider, appTextStyles),
+                          ),
+                          errorWidget(appTextStyles, "Veuillez sélectionner une date", _selectedDayError),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          isSlotsHidden ? Container() :
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Sélectionnez un créneau",
+                                style: appTextStyles.onyxSemiBold16,
+                              ),
+                              const SizedBox(height: 15),
+                              isLoadingSlots ? Container(
+                                margin: const EdgeInsets.only(bottom: 30),
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(color: themeProvider.blue,),
+                              ) : _buildTimeList(themeProvider, appTextStyles, width),
+                              errorWidget(appTextStyles, "Veuillez sélectionner un créneau", _selectedTimeError),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          ),
+                          Text("Saisissez le motif du RDV",
+                              style: appTextStyles.onyxSemiBold16),
+                          const SizedBox(height: 10),
+                          CustomMultilineTextField(
+                            themeProvider: themeProvider,
+                            textInputAction: TextInputAction.next,
+                            hint: 'Exemple: "bilan de santé annuel"',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Veuillez saisir le motif";
+                              }  else if (value.length < 20) {
+                                return 'Le motif doit contenir au moins 20 caractères';
+                              } else {
+                                return null;
+                              }
+                            },
+                            onSaved: (value){
+                              _motif=value ?? "";
+                              print(value);
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          ///BUTTON
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomElevatedButton(
+                                    txt: "Confirmer",
+                                    txtStyle: appTextStyles.whiteSemiBold16,
+                                    btnColor: themeProvider.ateneoBlue,
+                                    btnWidth: double.maxFinite,
+                                  onPressed: () {
+                                    if(!formIsInvalid()){
+                                      print("patient: $_selectedPatient");
+                                      print("date: $_selectedDay");
+                                      print("time: $_selectedTime");
+                                      print("motif: $_motif");
+                                      print("Processing appointment booking...");
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -416,9 +382,6 @@ class _AddAptScreenState extends State<AddAptScreen> {
     }
   }*/
 
-  int selectedIndex = -1;
-  String _selectedTime = "";
-
   Widget _buildTimeList(
       ThemeProvider themeProvider, AppTextStyles appTextStyles, double width) {
     int count = slots.length;
@@ -429,24 +392,25 @@ class _AddAptScreenState extends State<AddAptScreen> {
         (count / itemsPerRow).ceil() *
         (1 / ratio);
     return SizedBox(
-      height: calcHeight, // Set a fixed height or adjust as needed
+      height: calcHeight,
       child: GridView.builder(
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3, // Adjust the number of columns as needed
-          mainAxisSpacing: 10.0, // Spacing between rows
-          crossAxisSpacing: 10.0, // Spacing between columns
-          childAspectRatio: ratio, // Adjust aspect ratio of each grid item
+          crossAxisCount: 3,
+          mainAxisSpacing: 10.0,
+          crossAxisSpacing: 10.0,
+          childAspectRatio: ratio,
         ),
         itemCount: slots.length,
         itemBuilder: (context, index) {
-          bool isSelected = selectedIndex == index;
+          bool isSelected = selectedSlotIndex == index;
 
           return GestureDetector(
             onTap: () {
               setState(() {
-                selectedIndex = index;
-                _selectedTime = slots[selectedIndex];
+                selectedSlotIndex = index;
+                _selectedTime = slots[selectedSlotIndex];
+                _selectedTimeError = false;
               });
             },
             child: Container(
@@ -524,12 +488,69 @@ class _AddAptScreenState extends State<AddAptScreen> {
       onDaySelected: (selectedDay, focusedDay) {
         setState(() {
           _selectedTime = "";
-          selectedIndex = -1;
+          selectedSlotIndex = -1;
           _selectedDay = selectedDay;
+          _selectedDayError = false;
           _focusedDay = focusedDay;
           fetchTimeSlots(selectedDay);
         });
       },
     );
   }
+
+  bool formIsInvalid() {
+    if (_selectedPatient.isEmpty) {
+      setState(() {
+        _selectedPatientError = true;
+      });
+    } else{
+      setState(() {
+        _selectedPatientError = false;
+      });
+    }
+
+    if (isSlotsHidden) {
+      setState(() {
+        _selectedDayError = true;
+      });
+    } else{
+      setState(() {
+        _selectedDayError = false;
+      });
+    }
+
+    if (_selectedTime.isEmpty) {
+      setState(() {
+        _selectedTimeError = true;
+      });
+    } else{
+      setState(() {
+        _selectedTimeError = false;
+      });
+    }
+    bool motifError=false;
+    if(_formKey.currentState!.validate()){
+      motifError=false;
+    } else{
+      motifError=true;
+    }
+    return _selectedPatientError || _selectedDayError || _selectedTimeError || motifError;
+  }
+
+ Widget errorWidget(AppTextStyles appTextStyles, String msg, bool condition){
+    return  Visibility(
+      visible: condition,
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            msg,
+            style: appTextStyles.redLight13,
+          )
+        ],
+      ),
+    );
+ }
 }

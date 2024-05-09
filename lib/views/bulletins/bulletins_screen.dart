@@ -403,7 +403,6 @@ class _BulletinsScreenState extends State<BulletinsScreen>
         case 1:
           // retrieve bs list
           bsList = bulletinResponse.bulletins;
-          print("here test bs: ${bsList.toString()}");
           int counter = 1;
           setState(() {
             categorizeBSLists();
