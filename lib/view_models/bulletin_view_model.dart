@@ -24,7 +24,29 @@ class BulletinViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
-      //print("here test bs: "+result);
+      final bulletinResponse = ListBulletinsResponse.fromJson(result);
+      return bulletinResponse;
+    } catch (e) {
+      print("Error fetching bulletins: $e");
+      return ListBulletinsResponse(res_code: -1, bulletins: []);
+    }
+  }
+
+  Future<ListBulletinsResponse> getBulletinsByStatus(String userId, String status) async {
+    try {
+      await client.authenticate(
+          dbName, AppConfig.dbUsername, AppConfig.dbPassword);
+      final requestData = {
+        'adherent_id': userId,
+        'state': status,
+      };
+      final result = await client.callKw({
+        'model': 'bulletin.soin',
+        'method': 'get_bs_list_by_state',
+        'args': [requestData],
+        'kwargs': {},
+      }).timeout(const Duration(seconds: 20));
+      print(result);
       final bulletinResponse = ListBulletinsResponse.fromJson(result);
       return bulletinResponse;
     } catch (e) {

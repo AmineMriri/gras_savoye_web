@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:healio/helper/app_text_styles.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../view_models/user_view_model.dart';
+import '../../widgets/custom_dropdown_button.dart';
 import '../../widgets/custom_info_dialog.dart';
 
 class ForgotPwdScreen extends StatefulWidget {
@@ -24,6 +26,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
   late UserViewModel userViewModel;
   bool _isLoading = false;
   late ThemeProvider themeProvider;
+  String? _selectedDbVal;
 
   @override
   void initState() {
@@ -82,7 +85,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
                                 Image.asset("assets/images/app_icon.png", width: 200),
                           ),
                           const SizedBox(
-                            height: 36,
+                            height: 30,
                           ),
                           Text(
                             "Ne vous inquiétez pas, nous vous aiderons à vous connecter",
@@ -90,9 +93,21 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
                             style: appTextStyles.graniteGreyRegular16,
                           ),
                           const SizedBox(
-                            height: 36,
+                            height: 30,
                           ),
-
+                          FractionallySizedBox(
+                            widthFactor: 0.6,
+                            child: CustomDropdown(
+                              hint: 'Votre assurance',
+                              items: const ['Gras Savoye', 'We Cover'],
+                              selectedValue: _selectedDbVal,
+                              themeProvider: themeProvider,
+                              onChanged: null,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
                           ///TEXT FIELD
                           CustomTextField(
                             hint: "john.doe@example.com",

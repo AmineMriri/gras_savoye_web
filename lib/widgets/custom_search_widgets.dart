@@ -10,7 +10,7 @@ class CustomSearchWidgets extends StatefulWidget {
   final void Function()? onPressedFilter;
   TextEditingController? controller;
   String searchHint;
-  Widget body;
+  Widget? body;
 
   CustomSearchWidgets({
     this.onChanged,
@@ -30,6 +30,7 @@ class _CustomSearchWidgetsState extends State<CustomSearchWidgets> {
 
   @override
   Widget build(BuildContext context) {
+    print("CustomSearchWidgets updated");
     AppTextStyles appTextStyles = AppTextStyles(context);
     final themeProvider = context.themeProvider;
     return Row(
@@ -68,42 +69,47 @@ class _CustomSearchWidgetsState extends State<CustomSearchWidgets> {
             ),
           ),
         ),
-        const SizedBox(width: 10,),
-        Container(
-          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.0),
-            color: themeProvider.ateneoBlue,
-          ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.filter_list,
-                color: Colors.white,
-              ),
-              onPressed: ()=>CustomBottomSheet.show(
-                context: context,
-                title: "Filtres",
-                btnTxt: "Appliquer",
-                hPadding: 30,
-                hasResetBtn: true,
-                content:  StatefulBuilder(
-                    builder: (context, setState) {
-                      return widget.body;
-                    }
+        if(widget.body!=null)
+          Row(
+            children: [
+              const SizedBox(width: 10,),
+              Container(
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.0),
+                  color: themeProvider.ateneoBlue,
                 ),
-                onPressed: (){
-                  if (widget.onPressedFilter != null) {
-                    widget.onPressedFilter!();
-                    Navigator.pop(context);
-                  }
-                },
-                onClosePressed: () {
-                  Navigator.pop(context);
-                },
-                themeProvider: themeProvider,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.filter_list,
+                    color: Colors.white,
+                  ),
+                  onPressed: ()=>CustomBottomSheet.show(
+                    context: context,
+                    title: "Filtres",
+                    btnTxt: "Appliquer",
+                    hPadding: 30,
+                    hasResetBtn: true,
+                    content:  StatefulBuilder(
+                        builder: (context, setState) {
+                          return widget.body!;
+                        }
+                    ),
+                    onPressed: (){
+                      if (widget.onPressedFilter != null) {
+                        widget.onPressedFilter!();
+                        Navigator.pop(context);
+                      }
+                    },
+                    onClosePressed: () {
+                      Navigator.pop(context);
+                    },
+                    themeProvider: themeProvider,
+                  ),
+                ),
               ),
-            ),
-        ),
+            ],
+          )
       ],
     );
   }

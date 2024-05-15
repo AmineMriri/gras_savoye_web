@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
-import 'package:healio/views/appointments/apt_details_screen.dart';
+import 'package:healio/widgets/custom_apt_item_container.dart';
 import 'package:healio/widgets/custom_percent.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../helper/app_text_styles.dart';
@@ -21,21 +21,7 @@ class AptItem extends StatelessWidget {
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            backgroundColor: Colors.green,
-            foregroundColor: Colors.white,
-            icon: Icons.phone_rounded,
-            padding: const EdgeInsets.all(0),
-            onPressed: (BuildContext context) async {
-              final url=Uri.parse('tel:+216 52221191');
-              if(await canLaunchUrl(url)){
-                await launchUrl(url);
-              }else{
-                throw 'Failed to launch $url';
-              }
-            },
-          ),
-          SlidableAction(
-            backgroundColor: themeProvider.uclaGold,
+            backgroundColor: themeProvider.blue,
             foregroundColor: Colors.white,
             icon: Icons.directions_rounded,
             padding: const EdgeInsets.all(0),
@@ -45,9 +31,23 @@ class AptItem extends StatelessWidget {
               final mapUrl = Uri.parse('https://maps.google.com/?q=$latitude,$longitude');
 
               if (await canLaunchUrl(mapUrl)) {
-              await launchUrl(mapUrl);
+                await launchUrl(mapUrl);
               } else {
-              throw 'Failed to launch $mapUrl';
+                throw 'Failed to launch $mapUrl';
+              }
+            },
+          ),
+          SlidableAction(
+            backgroundColor: themeProvider.uclaGold,
+            foregroundColor: Colors.white,
+            icon: Icons.email_rounded,
+            padding: const EdgeInsets.all(0),
+            onPressed: (BuildContext context) async {
+              final url=Uri.parse('mailto: example@gmail.com');
+              if(await canLaunchUrl(url)){
+                await launchUrl(url);
+              }else{
+                throw 'Failed to launch $url';
               }
             },
           ),
@@ -74,7 +74,12 @@ class AptItem extends StatelessWidget {
 
         ],
       ),
-      child: InkWell(
+      child: CustomAptItemContainer(
+        appTextStyles: appTextStyles,
+        themeProvider: themeProvider,
+        imgAsset: 'assets/images/blank_profile_pic.png',
+      ),
+      /*child: InkWell(
         onTap: () => Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => const AptDetailsScreen())),
         child: CustomItemContainer(
@@ -87,26 +92,8 @@ class AptItem extends StatelessWidget {
           detailsSecondary: "Fév",
           hasArrowForward: true,
         ),
-      ),
+      ),*/
     );
   }
 
-  /*void _showDeleteDialog(BuildContext context,ThemeProvider themeProvider, AppTextStyles appTextStyles) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomYesNoDialog(
-          title: 'Annuler mon RDV',
-          content: 'Êtes-vous sûr?',
-          onYesPressed: () async {
-            // cancel RDV
-            print("cancel rdv");
-          },
-          primaryColor: themeProvider.red,
-          themeProvider: themeProvider,
-          appTextStyles: appTextStyles,
-        );
-      },
-    );
-  }*/
 }

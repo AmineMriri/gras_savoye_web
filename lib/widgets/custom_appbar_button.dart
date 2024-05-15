@@ -5,14 +5,14 @@ import 'dart:math' as math;
 class CustomAppBarButton extends StatelessWidget {
   final IconData iconData;
   final ThemeProvider themeProvider;
-  final bool isTransform;
+  //final bool isTransform;
   final void Function()? onPressed;
 
   const CustomAppBarButton(
       {super.key,
       required this.iconData,
       required this.themeProvider,
-      required this.isTransform,
+      //required this.isTransform,
       this.onPressed});
 
   @override
@@ -24,7 +24,12 @@ class CustomAppBarButton extends StatelessWidget {
         color: themeProvider.bubbles,
       ),
       child: IconButton(
-        icon: Transform(
+        icon: Icon(
+          iconData,
+          color: themeProvider.ateneoBlue,
+          size: 24,
+        ),
+        /*Transform(
           alignment: Alignment.center,
           transform: isTransform ? Matrix4.rotationY(math.pi) : Matrix4.identity(),
           child: Icon(
@@ -32,7 +37,7 @@ class CustomAppBarButton extends StatelessWidget {
             color: themeProvider.ateneoBlue,
             size: 24,
           ),
-        ),
+        ),*/
         onPressed: onPressed,
       ),
     );

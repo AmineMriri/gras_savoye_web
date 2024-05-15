@@ -71,12 +71,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: RefreshIndicator(
         onRefresh: refreshBSDetails,
         child: Scaffold(
+          backgroundColor: themeProvider.ghostWhite,
           appBar: CustomAppBar(
             title: "Mon Profil",
-            icon: CustomAppBarButton(
+            icon: null,
+            trailing: CustomAppBarButton(
               iconData: Icons.logout_rounded,
               themeProvider: themeProvider,
-              isTransform: true,
               onPressed: () {
                 userViewModel.performLogout(context);
               },

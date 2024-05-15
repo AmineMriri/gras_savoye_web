@@ -6,7 +6,7 @@ import 'package:healio/views/appointments/apt_item.dart';
 import 'package:healio/widgets/custom_date_picker.dart';
 
 import '../../helper/app_text_styles.dart';
-import '../../widgets/custom_dropdown_button.dart';
+import '../../widgets/custom_search_dropdown_button.dart';
 import '../../widgets/custom_search_widgets.dart';
 
 class AppointmentsList extends StatefulWidget {
@@ -18,6 +18,12 @@ class AppointmentsList extends StatefulWidget {
 
 class _AppointmentsListState extends State<AppointmentsList> {
   String? _selectedSpecialityValue;
+  List<String> specialitiesList = [
+    'Généraliste',
+    'ORL',
+    'Dentiste',
+    'Radiologue',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +44,15 @@ class _AppointmentsListState extends State<AppointmentsList> {
                 onPressedFilter: (){},
                 body: Column(
                   children: [
-                    CustomDropdown(
-                      hint: 'Spécialité',
-                      items: const ['ORL', 'Généraliste','Test'],
-                      selectedValue: _selectedSpecialityValue,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedSpecialityValue = newValue;
-                        });
-                      },
+                    CustomSearchDropdown(
+                      list: specialitiesList,
                       themeProvider: themeProvider,
+                      appTextStyles: appTextStyles,
+                      hint: 'Spécialité',
+                      notFoundString: 'Aucune',
+                      onValueChanged: (selectedValue) {
+                        _selectedSpecialityValue=selectedValue;
+                      },
                     ),
                     const SizedBox(
                       height: 20,

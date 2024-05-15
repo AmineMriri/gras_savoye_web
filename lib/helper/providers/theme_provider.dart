@@ -60,19 +60,33 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
   }*/
 
-  void _initializeColors() {
-    _ateneoBlue = const Color(0xff003B79);
-    _ghostWhite = const Color(0xffF8F9FB);
+  /*void _initializeColors() {
+    _ateneoBlue = const Color(0xff144578);
+    _ghostWhite = const Color(0xffEBEEF4);
     _onyx = const Color(0xff35383D);
     _graniteGrey = const Color(0xff615E67);
     _cadetGrey = const Color(0xff9CA3AF);
     _lightSilver = const Color(0xffD1D5DB);
-    _bubbles = const Color(0xffE2F3FF);
-    _spanishGreen = const Color(0xff028D4C);
-    _uclaGold = const Color(0xffFDB400);
+    _bubbles = const Color(0xffDCE1EB);
+    _spanishGreen = const Color(0xff4CB383);
+    _uclaGold = const Color(0xffF4C187);
     _red = const Color(0xffE47B73);
     _brightGrey = const Color(0xffE5E7EB);
-    _blue = const Color(0xff619DDC);
+    _blue = const Color(0xff6089B5);
+  }*/
+  void _initializeColors() {
+    _ateneoBlue = const Color(0xff035EF7);
+    _ghostWhite = const Color(0xffEBEEF4);
+    _onyx = const Color(0xff2E2E2E);
+    _graniteGrey = const Color(0xff615E67);
+    _cadetGrey = const Color(0xff9CA3AF);
+    _lightSilver = const Color(0xffD1D5DB);
+    _bubbles = const Color(0xffDCE1EB);
+    _spanishGreen = const Color(0xff2AC052);
+    _uclaGold = const Color(0xffFF4F0D);
+    _red = const Color(0xffD7373F);
+    _brightGrey = const Color(0xffE5E7EB);
+    _blue = const Color(0xff035EF7);
   }
 }
 

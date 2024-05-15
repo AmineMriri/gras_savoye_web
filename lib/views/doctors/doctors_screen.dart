@@ -213,150 +213,152 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
+        backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: "Médecins",
-          icon: CustomAppBarButton(
+          themeProvider: themeProvider, icon: null,
+          trailing: CustomAppBarButton(
             iconData: Icons.logout_rounded,
             themeProvider: themeProvider,
-            isTransform: true,
             onPressed: () {
               userViewModel.performLogout(context);
             },
           ),
-          themeProvider: themeProvider,
         ),
-        body: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  CustomSearchWidgets(
-                    controller: searchController,
-                    onPressedFilter: ()=>{
-                      filterDoctors(selectedRegion,selectedSpeciality)
-                    },
-                    onPressedSearch: ()=>{
-                      searchDocByName(searchController.text)
-                    },
-                    searchHint: "Recherche par nom du médecin",
-                    body: Column(
+        body: Container(
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    CustomSearchWidgets(
+                      controller: searchController,
+                      onPressedFilter: ()=>{
+                        filterDoctors(selectedRegion,selectedSpeciality)
+                      },
+                      onPressedSearch: ()=>{
+                        searchDocByName(searchController.text)
+                      },
+                      searchHint: "Recherche par nom du médecin",
+                      body: Column(
+                        children: [
+                          CustomSearchDropdown(
+                            list: regionsList,
+                            themeProvider: themeProvider,
+                            appTextStyles: appTextStyles,
+                            hint: 'Région',
+                            notFoundString: 'Aucune',
+                            onValueChanged: (selectedValue) {
+                              selectedRegion=selectedValue;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          CustomSearchDropdown(
+                            list: specialitiesList,
+                            themeProvider: themeProvider,
+                            appTextStyles: appTextStyles,
+                            hint: 'Spécialité',
+                            notFoundString: 'Aucune',
+                            onValueChanged: (selectedValue) {
+                              selectedSpeciality=selectedValue;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomSearchDropdown(
-                          list: regionsList,
-                          themeProvider: themeProvider,
-                          appTextStyles: appTextStyles,
-                          hint: 'Région',
-                          notFoundString: 'Aucune',
-                          onValueChanged: (selectedValue) {
-                            selectedRegion=selectedValue;
-                          },
+                        GestureDetector(
+                          onTap: refresh,
+                          child: Text(
+                            "Réinitialiser",
+                            style: appTextStyles.ateneoBlueMediumUnderlined12,
+                          ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        CustomSearchDropdown(
-                          list: specialitiesList,
-                          themeProvider: themeProvider,
-                          appTextStyles: appTextStyles,
-                          hint: 'Spécialité',
-                          notFoundString: 'Aucune',
-                          onValueChanged: (selectedValue) {
-                            selectedSpeciality=selectedValue;
-                          },
+                        Text(
+                          "Résultat: $_totalCount Médecins",
+                          style: appTextStyles.ateneoBlueMedium12,
                         ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: refresh,
-                        child: Text(
-                          "Réinitialiser",
-                          style: appTextStyles.ateneoBlueMediumUnderlined12,
-                        ),
-                      ),
-                      Text(
-                        "Résultat: $_totalCount Médecins",
-                        style: appTextStyles.ateneoBlueMedium12,
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            isLoading
-                ? Expanded(child: SpinKitCircle(color: themeProvider.blue, size: 50.0,))
-                : isError
-                ? ErrorDisplayAndRefresh(appTextStyles, themeProvider,
-                    () async {
-                  setState(() {
-                    refresh();
-                  });
-                })
-                : Expanded(
-              child: Stack(
-                children: [
-                  RefreshIndicator(
-                    onRefresh: refresh,
-                    child: doctorsList.isEmpty
-                        ? Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      child: Center(
-                        child: Text(
-                          'Aucun médecin n\'a été  trouvé!',
-                          textAlign: TextAlign.center,
-                          style: appTextStyles.blueSemiBold16,
-                        ),
-                      ),
                     )
-                        : ListView.builder(
-                      itemCount: doctorsList.length,
-                      itemBuilder: (context, index) {
-                        final doctor = doctorsList[index];
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 15),
-                          padding: const EdgeInsets.symmetric(vertical: 3),
-                          child: DocItem(doctor: doctor),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if(_totalPages>1)
-              Card(
-                margin: EdgeInsets.zero,
-                color: themeProvider.ghostWhite,
-                child: NumberPaginator(
-                  numberPages: _totalPages,
-                  onPageChange: (int index) {
-                    setState(() {
-                      _currentPage = index + 1;
-                    });
-                    // Call appropriate method based on current search/filter state
-                    if (selectedRegion.isNotEmpty && selectedSpeciality.isNotEmpty) {
-                      filterDoctors(selectedRegion, selectedSpeciality);
-                    } else if (searchController.text.isNotEmpty) {
-                      searchDocByName(searchController.text);
-                    } else {
-                      fetchDoctors(_currentPage, _limitPerPage);
-                    }
-                  },
-                  config: NumberPaginatorUIConfig(
-                    buttonSelectedBackgroundColor: themeProvider.ateneoBlue,
-                    buttonUnselectedForegroundColor: themeProvider.ateneoBlue,
-                  ),
+                  ],
                 ),
               ),
-          ],
+              isLoading
+                  ? Expanded(child: SpinKitCircle(color: themeProvider.blue, size: 50.0,))
+                  : isError
+                  ? ErrorDisplayAndRefresh(appTextStyles, themeProvider,
+                      () async {
+                    setState(() {
+                      refresh();
+                    });
+                  })
+                  : Expanded(
+                child: Stack(
+                  children: [
+                    RefreshIndicator(
+                      onRefresh: refresh,
+                      child: doctorsList.isEmpty
+                          ? Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Center(
+                          child: Text(
+                            'Aucun médecin n\'a été  trouvé!',
+                            textAlign: TextAlign.center,
+                            style: appTextStyles.blueSemiBold16,
+                          ),
+                        ),
+                      )
+                          : ListView.builder(
+                        itemCount: doctorsList.length,
+                        itemBuilder: (context, index) {
+                          final doctor = doctorsList[index];
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            child: DocItem(doctor: doctor),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if(_totalPages>1)
+                Card(
+                  margin: EdgeInsets.zero,
+                  color: themeProvider.ghostWhite,
+                  child: NumberPaginator(
+                    numberPages: _totalPages,
+                    onPageChange: (int index) {
+                      setState(() {
+                        _currentPage = index + 1;
+                      });
+                      // Call appropriate method based on current search/filter state
+                      if (selectedRegion.isNotEmpty && selectedSpeciality.isNotEmpty) {
+                        filterDoctors(selectedRegion, selectedSpeciality);
+                      } else if (searchController.text.isNotEmpty) {
+                        searchDocByName(searchController.text);
+                      } else {
+                        fetchDoctors(_currentPage, _limitPerPage);
+                      }
+                    },
+                    config: NumberPaginatorUIConfig(
+                      buttonSelectedBackgroundColor: themeProvider.ateneoBlue,
+                      buttonUnselectedForegroundColor: themeProvider.ateneoBlue,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

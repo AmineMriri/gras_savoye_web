@@ -37,10 +37,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: 'Notifications',
-          icon: CustomAppBarButton(
+          icon: null,
+          trailing: CustomAppBarButton(
             iconData: Icons.logout_rounded,
             themeProvider: themeProvider,
-            isTransform: true,
             onPressed: () {
               userViewModel.performLogout(context);
             },

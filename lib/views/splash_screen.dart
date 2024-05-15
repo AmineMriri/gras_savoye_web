@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigate() async {
     bool isLoggedIn = await isUserLoggedIn();
-    // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? NavigationBottom() : SignInScreen()));
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? const BiometricsScreen() : const SignInScreen()));
+     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? NavigationBottom() : SignInScreen()));
+    //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? const BiometricsScreen() : const SignInScreen()));
   }
 }

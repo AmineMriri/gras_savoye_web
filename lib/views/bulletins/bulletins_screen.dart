@@ -34,25 +34,13 @@ class _BulletinsScreenState extends State<BulletinsScreen>
   late TabController _tabController;
   String? userId;
   String? name;
-  String? conjoint;
-  bool? hasChildren;
-  bool? hasParents;
   List<Widget> tabs = [];
   late BulletinViewModel bulletinViewModel;
   late UserViewModel userViewModel;
   List<Bulletin> bsList = [];
-  List<Bulletin> bsListAdherent = [];
-  List<Bulletin> bsListConjoint = [];
-  List<Bulletin> bsListChildren = [];
-  List<Bulletin> bsListParents = [];
-  int tabAdherentCount = 0;
-  int tabConjointCount = 0;
-  int tabEnfantsCount = 0;
-  int tabParentsCount = 0;
   bool isLoading = true;
   bool isError = false;
   late Future<void> _userDataFuture;
-  late ThemeProvider themeProvider;
   late AppTextStyles appTextStyles;
 
   @override
@@ -65,7 +53,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = context.themeProvider;
+    ThemeProvider themeProvider = context.themeProvider;
     appTextStyles = AppTextStyles(context);
     return FutureBuilder(
       future: _userDataFuture,
@@ -94,21 +82,11 @@ class _BulletinsScreenState extends State<BulletinsScreen>
       right: false,
       bottom: true,
       child: Scaffold(
+        backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: "Mes Bulletins",
-          icon: CustomAppBarButton(
-            iconData: Icons.logout_rounded,
-            themeProvider: themeProvider,
-            isTransform: true,
-            onPressed: () {
-              userViewModel.performLogout(context);
-            },
-          ),
           themeProvider: themeProvider,
-          tabBar: conjoint != null ||
-                  (hasChildren != null && hasChildren!) ||
-                  (hasParents != null && hasParents!)
-              ? TabBar(
+          tabBar: TabBar(
                   isScrollable: true,
                   controller: _tabController,
                   indicatorColor: themeProvider.ateneoBlue,
@@ -116,17 +94,23 @@ class _BulletinsScreenState extends State<BulletinsScreen>
                   unselectedLabelColor: themeProvider.cadetGrey,
                   tabs: tabs,
                   tabAlignment: TabAlignment.center,
-                )
-              : null,
+                ),
           trailing: CustomAppBarButton(
+            iconData: Icons.logout_rounded,
+            themeProvider: themeProvider,
+            onPressed: () {
+              userViewModel.performLogout(context);
+            },
+          ), icon: null,
+          /*trailing: CustomAppBarButton(
             iconData: Icons.archive_rounded,
             themeProvider: themeProvider,
-            isTransform: false,
+            //isTransform: false,
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const BulletinsArchiveScreen()));
             },
-          ),
+          ),*/
         ),
         body: isLoading
             ? SpinKitCircle(color: themeProvider.blue, size: 50.0)
@@ -139,7 +123,20 @@ class _BulletinsScreenState extends State<BulletinsScreen>
                   })
                 : TabBarView(
                     controller: _tabController,
-                    children: getListsBS(),
+                    children: [
+                      BulletinList(
+                        bsList: bsList,
+                        onRefresh: refreshLists,
+                      ),
+                      BulletinList(
+                        bsList: bsList,
+                        onRefresh: refreshLists,
+                      ),
+                      BulletinList(
+                        bsList: bsList,
+                        onRefresh: refreshLists,
+                      ),
+                    ],
                   ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: themeProvider.ateneoBlue,
@@ -169,50 +166,21 @@ class _BulletinsScreenState extends State<BulletinsScreen>
         userId = userData['id'];
         fetchBS();
       }
-      int counter = 1;
       if (userData['name'] != null) {
         name = userData['name'];
       }
-      if (userData['conjoint'] != null) {
-        conjoint = userData['conjoint'];
-        counter++;
-      }
-      if (userData['children'] != null) {
-        hasChildren = userData['children'];
-        if (hasChildren!) {
-          counter++;
-        }
-      }
-      if (userData['parents'] != null) {
-        hasParents = userData['parents'];
-        if (hasParents!) {
-          counter++;
-        }
-      }
-      setupTabContoller(counter);
+      setupTabContoller();
     }
   }
 
   Map<String, dynamic>? getUserDataFromPreviousScreen() {
     String? id;
     String? name;
-    String? conjoint;
-    bool? hasChildren;
-    bool? hasParents;
     if (widget.loginResponse!.id != null) {
       id = widget.loginResponse!.id!;
     }
     if (widget.loginResponse!.name != null) {
       name = widget.loginResponse!.name!;
-    }
-    if (widget.loginResponse!.conjoint != null) {
-      conjoint = widget.loginResponse!.conjoint;
-    }
-    if (widget.loginResponse!.child != null) {
-      hasChildren = widget.loginResponse!.child!;
-    }
-    if (widget.loginResponse!.parent != null) {
-      hasParents = widget.loginResponse!.parent;
     }
     Map<String, dynamic> userData = {};
     if (id != null) {
@@ -220,15 +188,6 @@ class _BulletinsScreenState extends State<BulletinsScreen>
     }
     if (name != null) {
       userData['name'] = name;
-    }
-    if (conjoint != null) {
-      userData['conjoint'] = conjoint;
-    }
-    if (hasChildren != null) {
-      userData['children'] = hasChildren;
-    }
-    if (hasParents != null) {
-      userData['parents'] = hasParents;
     }
     if (userData.isNotEmpty) {
       return userData;
@@ -241,9 +200,6 @@ class _BulletinsScreenState extends State<BulletinsScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
     String? name = prefs.getString('name');
-    String? conjoint = prefs.getString('conjoint');
-    bool? hasChildren = prefs.getBool('children');
-    bool? hasParents = prefs.getBool('parents');
 
     Map<String, dynamic> userData = {};
 
@@ -255,18 +211,6 @@ class _BulletinsScreenState extends State<BulletinsScreen>
       userData['name'] = name;
     }
 
-    if (conjoint != null) {
-      userData['conjoint'] = conjoint;
-    }
-
-    if (hasChildren != null) {
-      userData['children'] = hasChildren;
-    }
-
-    if (hasParents != null) {
-      userData['parents'] = hasParents;
-    }
-
     if (userData.isNotEmpty) {
       return userData;
     } else {
@@ -276,112 +220,51 @@ class _BulletinsScreenState extends State<BulletinsScreen>
 
   List<Widget> getTabs() {
     List<Widget> tabs = [];
-    if (name != null) {
-      tabs.add(
-        Tab(
-          child: Row(
-            children: [
-              Text(name!.toLowerCase().capitalize()),
-              const SizedBox(width: 5),
-              customBadge(tabAdherentCount.toString())
-            ],
-          ),
+    tabs.add(
+      Tab(
+        child: Row(
+          children: [
+            Text("Traité"),
+            const SizedBox(width: 5),
+            customBadge(bsList.length.toString())
+          ],
         ),
-      );
-    }
-    if (conjoint != null) {
-      tabs.add(
-        Tab(
-          child: Row(
-            children: [
-              Text(conjoint!.toLowerCase().capitalize()),
-              const SizedBox(width: 5),
-              customBadge(tabConjointCount.toString())
-            ],
-          ),
+      ),
+    );
+    tabs.add(
+      Tab(
+        child: Row(
+          children: [
+            Text("En Cours"),
+            const SizedBox(width: 5),
+            customBadge(bsList.length.toString())
+          ],
         ),
-      );
-    }
-    if (hasChildren != null && hasChildren!) {
-      tabs.add(
-        Tab(
-          child: Row(
-            children: [
-              const Text("Mes enfants"),
-              const SizedBox(width: 5),
-              customBadge(tabEnfantsCount.toString())
-            ],
-          ),
+      ),
+    );
+    tabs.add(
+      Tab(
+        child: Row(
+          children: [
+            Text("Tous"),
+            const SizedBox(width: 5),
+            customBadge(bsList.length.toString())
+          ],
         ),
-      );
-    }
-    if (hasParents != null && hasParents!) {
-      tabs.add(
-        Tab(
-          child: Row(
-            children: [
-              const Text("Mes parents"),
-              const SizedBox(width: 5),
-              customBadge(tabParentsCount.toString())
-            ],
-          ),
-        ),
-      );
-    }
+      ),
+    );
     return tabs;
   }
 
-  void setupTabContoller(int count) {
+  void setupTabContoller() {
     tabs = getTabs();
-    _tabController = TabController(length: count, vsync: this);
-  }
-
-  List<Widget> getListsBS() {
-    List<Widget> tabs = [
-      BulletinList(
-        bsList: bsListAdherent,
-        type: 'adherent',
-        onRefresh: refreshLists,
-      )
-    ];
-    if (conjoint != null) {
-      tabs.add(BulletinList(
-        bsList: bsListConjoint,
-        type: 'conjoint',
-        onRefresh: refreshLists,
-      ));
-    }
-    if (hasChildren != null && hasChildren!) {
-      tabs.add(BulletinList(
-        bsList: bsListChildren,
-        type: 'enfants',
-        onRefresh: refreshLists,
-      ));
-    }
-    if (hasParents != null && hasParents!) {
-      tabs.add(BulletinList(
-        bsList: bsListParents,
-        type: 'parent',
-        onRefresh: refreshLists,
-      ));
-    }
-    return tabs;
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   Future<void> refreshLists() async {
     setState(() {
       isLoading = true;
       isError = false;
-      //reset tabs counts
-      tabAdherentCount = 0;
-      tabConjointCount = 0;
-      tabEnfantsCount = 0;
-      tabParentsCount = 0;
-      //clear lists
-      bsListAdherent.clear();
-      bsListConjoint.clear();
-      bsListChildren.clear();
-      bsListParents.clear();
     });
     await fetchBS();
   }
@@ -390,27 +273,14 @@ class _BulletinsScreenState extends State<BulletinsScreen>
     try {
       ListBulletinsResponse bulletinResponse =
           await bulletinViewModel.getBulletins(userId!);
+      //await bulletinViewModel.getBulletinsByStatus(userId!,"en cours");
       switch (bulletinResponse.res_code) {
         case 1:
           // retrieve bs list
           bsList = bulletinResponse.bulletins;
           int counter = 1;
           setState(() {
-            categorizeBSLists();
-            tabAdherentCount = bsListAdherent.length;
-            tabConjointCount = bsListConjoint.length;
-            tabEnfantsCount = bsListChildren.length;
-            tabParentsCount = bsListParents.length;
-            if (tabConjointCount > 0) {
-              counter++;
-            }
-            if (tabEnfantsCount > 0) {
-              counter++;
-            }
-            if (tabParentsCount > 0) {
-              counter++;
-            }
-            setupTabContoller(counter);
+            setupTabContoller();
             isLoading = false;
             isError = false;
           });
@@ -442,27 +312,6 @@ class _BulletinsScreenState extends State<BulletinsScreen>
     super.dispose();
   }
 
-  categorizeBSLists() {
-    for (var bulletin in bsList) {
-      switch (bulletin.prestataire.toLowerCase()) {
-        case 'adherent':
-          bsListAdherent.add(bulletin);
-          break;
-        case 'conjoint':
-          bsListConjoint.add(bulletin);
-          break;
-        case 'enfants':
-          bsListChildren.add(bulletin);
-          break;
-        case 'parent':
-          bsListParents.add(bulletin);
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
   Widget customBadge(
     String content,
   ) {
@@ -476,7 +325,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
           fontWeight: FontWeight.w600,
         ),
       ),
-      badgeStyle: const badges.BadgeStyle(badgeColor: Color(0xff9CA3AF)),
+      badgeStyle: const badges.BadgeStyle(badgeColor:  Color(0xff035EF7)),
     );
   }
 }

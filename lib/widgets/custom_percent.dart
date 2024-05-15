@@ -20,6 +20,34 @@ class CustomPercent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
+              "$totalPec DT / ",
+              style: appTextStyles.ateneoBlueSemiBold12,
+            ),
+            Text(
+              "$totalDep DT",
+              style: appTextStyles.redSemiBold12,
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        LinearPercentIndicator(
+          lineHeight: 8,
+          percent: totalPec/totalDep,
+          barRadius: const Radius.circular(12),
+          backgroundColor: themeProvider.red,
+          progressColor: themeProvider.spanishGreen,
+        ),
+      ],
+    );
+    /*
+    * Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
               "$totalPec DT",
               style: appTextStyles.spanishGreenSemiBold12,
             ),
@@ -40,6 +68,6 @@ class CustomPercent extends StatelessWidget {
           progressColor: themeProvider.spanishGreen,
         ),
       ],
-    );
+    );*/
   }
 }

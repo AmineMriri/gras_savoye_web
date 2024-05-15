@@ -37,9 +37,9 @@ class CustomBottomSheet {
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                decoration: BoxDecoration(
-                  color: themeProvider.ghostWhite,
-                  borderRadius: const BorderRadius.vertical(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
                     top: Radius.circular(12),
                   ),
                 ),
@@ -75,7 +75,7 @@ class CustomBottomSheet {
                           CustomElevatedButton(
                             txt: btnTxt,
                             txtStyle: appTextStyles.whiteSemiBold16,
-                            btnColor: themeProvider.ateneoBlue,
+                            btnColor: themeProvider.blue,
                             btnWidth: double.maxFinite,
                             btnHeight: 56,
                             onPressed: onPressed,

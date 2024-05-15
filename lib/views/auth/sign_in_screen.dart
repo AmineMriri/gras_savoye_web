@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/models/responses/user/login_response.dart';
 import 'package:healio/views/auth/forgot_pwd_screen.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/providers/theme_provider.dart';
 import '../../view_models/user_view_model.dart';
+import '../../widgets/custom_dropdown_button.dart';
 import '../../widgets/custom_info_dialog.dart';
 import '../../widgets/nav_bottom_bar.dart';
 
@@ -27,6 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
   late String email;
   late String password;
+  String? _selectedDbVal;
   bool _isLoading = false;
 
   @override
@@ -78,7 +81,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                       width: 200),
                                 ),
                                 const SizedBox(
-                                  height: 36,
+                                  height: 30,
                                 ),
                                 Text(
                                   "Veuillez vous connecter",
@@ -88,9 +91,21 @@ class _SignInScreenState extends State<SignInScreen> {
                               ],
                             ),
                             const SizedBox(
-                              height: 36,
+                              height: 30,
                             ),
-
+                            FractionallySizedBox(
+                              widthFactor: 0.6,
+                              child: CustomDropdown(
+                                hint: 'Votre assurance',
+                                items: const ['Gras Savoye', 'We Cover'],
+                                selectedValue: _selectedDbVal,
+                                themeProvider: themeProvider,
+                                onChanged: null,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
                             ///TEXT FIELDS
                             Column(
                               children: [

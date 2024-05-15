@@ -27,6 +27,7 @@ class _AptArchiveScreenState extends State<AptArchiveScreen>
       right: false,
       bottom: true,
       child: Scaffold(
+        backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: "Archives",
           icon: IconButton(

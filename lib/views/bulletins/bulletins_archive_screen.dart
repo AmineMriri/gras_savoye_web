@@ -32,6 +32,7 @@ class _BulletinsArchiveScreenState extends State<BulletinsArchiveScreen>
       right: false,
       bottom: true,
       child: Scaffold(
+        backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: "Archives",
           icon: IconButton(

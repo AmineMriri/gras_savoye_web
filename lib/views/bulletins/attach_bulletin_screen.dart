@@ -119,6 +119,7 @@ class _AttachBulletinScreenState extends State<AttachBulletinScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
+        backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: "Attacher un Bulletin",
           icon: IconButton(
@@ -397,7 +398,7 @@ class _AttachBulletinScreenState extends State<AttachBulletinScreen> {
                       child: CustomElevatedButton(
                           txt: "Effacer",
                           txtStyle: appTextStyles.whiteSemiBold16,
-                          btnColor: themeProvider.red,
+                          btnColor: themeProvider.blue,
                           btnWidth: double.maxFinite,
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -422,7 +423,7 @@ class _AttachBulletinScreenState extends State<AttachBulletinScreen> {
                       child: CustomElevatedButton(
                           txt: "Envoyer",
                           txtStyle: appTextStyles.whiteSemiBold16,
-                          btnColor: themeProvider.blue,
+                          btnColor: themeProvider.spanishGreen,
                           btnWidth: double.maxFinite,
                           onPressed: () {
                             if (files.isNotEmpty) {

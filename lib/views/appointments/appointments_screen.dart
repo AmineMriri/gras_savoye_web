@@ -40,16 +40,9 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
       right: false,
       bottom: true,
       child: Scaffold(
+        backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: "Mes RDVs",
-          icon: CustomAppBarButton(
-            iconData: Icons.logout_rounded,
-            themeProvider: themeProvider,
-            isTransform: true,
-            onPressed: () {
-              userViewModel.performLogout(context);
-            },
-          ),
           themeProvider: themeProvider,
           tabBar: TabBar(
             controller: _tabController,
@@ -63,14 +56,12 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
             ],
           ),
           trailing: CustomAppBarButton(
-            iconData: Icons.archive_rounded,
+            iconData: Icons.logout_rounded,
             themeProvider: themeProvider,
-            isTransform: false,
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const AptArchiveScreen()));
+              userViewModel.performLogout(context);
             },
-          ),
+          ), icon: null,
         ),
         body: TabBarView(
           controller: _tabController,

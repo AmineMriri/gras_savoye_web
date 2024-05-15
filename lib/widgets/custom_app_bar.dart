@@ -4,7 +4,7 @@ import '../helper/app_text_styles.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
-  final Widget icon;
+  final Widget? icon;
   final ThemeProvider themeProvider;
   final TabBar? tabBar;
   final Widget? trailing;
@@ -45,10 +45,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
       elevation: 0,
       title: Text(
         widget.title,
-        style: appTextStyles.onyxBold20,
+        style: appTextStyles.ateneoBlueBold20,
       ),
       centerTitle: true,
-      leading: widget.icon,
+      leading: Row(
+        children: [
+          const SizedBox(width: 15),
+          SizedBox(
+            width: 40,
+            child: widget.icon ?? Image.asset("assets/images/logo.png",),
+          ),
+        ],
+      ),
+
       bottom: widget.tabBar,
       actions: [if (widget.trailing != null) widget.trailing!],
     );

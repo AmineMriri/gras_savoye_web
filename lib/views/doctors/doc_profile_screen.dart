@@ -50,6 +50,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
+        backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: "",
           icon: IconButton(
@@ -173,7 +174,6 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                     CustomAppBarButton(
                       iconData: Icons.phone_rounded,
                       themeProvider: themeProvider,
-                      isTransform: false,
                       onPressed: () async {
                         final url=Uri.parse('tel:+216 $phone');
                         if(await canLaunchUrl(url)){
@@ -189,7 +189,6 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                     CustomAppBarButton(
                       iconData: Icons.email_rounded,
                       themeProvider: themeProvider,
-                      isTransform: false,
                       onPressed: () async {
                         final url=Uri.parse('mailto:$email');
                         if(await canLaunchUrl(url)){
@@ -205,7 +204,6 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                     CustomAppBarButton(
                       iconData: Icons.directions_rounded,
                       themeProvider: themeProvider,
-                      isTransform: false,
                       onPressed: () async {
                         const latitude = 36.831491;
                         const longitude = 10.308273;

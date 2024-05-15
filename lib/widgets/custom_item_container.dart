@@ -43,8 +43,8 @@ class CustomItemContainer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(100),
                     child: Image.asset(
                       imgAsset,
-                      height: 50,
-                      width: 50,
+                      height: 60,
+                      width: 60,
                     ),
                   ),
                   const SizedBox(
@@ -102,6 +102,7 @@ class CustomItemContainer extends StatelessWidget {
               ],
             ) : Container(),
           ],
-        ));
+        )
+    );
   }
 }

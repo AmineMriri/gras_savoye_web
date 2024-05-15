@@ -35,6 +35,7 @@ class _AptDetailsScreenState extends State<AptDetailsScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
+        backgroundColor: themeProvider.ghostWhite,
         appBar: CustomAppBar(
           title: "",
           icon: IconButton(
@@ -118,7 +119,6 @@ class _AptDetailsScreenState extends State<AptDetailsScreen> {
                         CustomAppBarButton(
                           iconData: Icons.phone_rounded,
                           themeProvider: themeProvider,
-                          isTransform: false,
                           onPressed: () async {
                             final url=Uri.parse('tel:+216 52221191');
                             if(await canLaunchUrl(url)){
@@ -134,7 +134,6 @@ class _AptDetailsScreenState extends State<AptDetailsScreen> {
                         CustomAppBarButton(
                           iconData: Icons.email_rounded,
                           themeProvider: themeProvider,
-                          isTransform: false,
                           onPressed: () async {
                             final url=Uri.parse('mailto:example.test@testing.com');
                             if(await canLaunchUrl(url)){
@@ -150,7 +149,6 @@ class _AptDetailsScreenState extends State<AptDetailsScreen> {
                         CustomAppBarButton(
                           iconData: Icons.directions_rounded,
                           themeProvider: themeProvider,
-                          isTransform: false,
                           onPressed: () async {
                             const latitude = 36.831491;
                             const longitude = 10.308273;
