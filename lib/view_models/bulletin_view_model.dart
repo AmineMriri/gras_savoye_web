@@ -47,8 +47,6 @@ class BulletinViewModel with ChangeNotifier {
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
       final bulletinResponse = ListBulletinsResponse.fromJson(result);
-      print("bulletinResponse.bulletins");
-      print(bulletinResponse.bulletins);
       return bulletinResponse;
     } catch (e) {
       print("Error fetching bulletins: $e");

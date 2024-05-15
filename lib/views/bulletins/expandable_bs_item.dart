@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:healio/helper/providers/theme_provider.dart';
+import 'package:permission_handler/permission_handler.dart';import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
 import 'package:healio/widgets/container_rounded_corners.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -23,9 +22,11 @@ class ExpandableBulletinItem extends StatefulWidget {
 
 class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
   bool _isExpanded = false;
+  late BulletinViewModel bulletinViewModel;
 
   @override
   Widget build(BuildContext context) {
+    bulletinViewModel = Provider.of<BulletinViewModel>(context, listen: false);
     final themeProvider = context.watch<ThemeProvider>();
     final appTextStyles = AppTextStyles(context);
     return InkWell(
@@ -80,18 +81,24 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
                         const SizedBox(height: 20,),
                         Row(
                           children: [
-                            ContainerRoundedCorners(
-                                "Contre visite",
-                                appTextStyles.whiteRegular10,
-                                themeProvider.blue,
-                                const Icon(Icons.file_download_outlined,color: Colors.white,)
+                            InkWell(
+                              onTap: ()=>requestPermission(fetchAndSaveDocument(context, widget.bs.bsId, widget.bs.numBs, 'Quittance')),
+                              child: ContainerRoundedCorners(
+                                  "Contre visite",
+                                  appTextStyles.whiteRegular10,
+                                  themeProvider.blue,
+                                  const Icon(Icons.file_download_outlined,color: Colors.white,)
+                              ),
                             ),
                             const SizedBox(width: 10,),
-                            ContainerRoundedCorners(
-                                "Quittance",
-                                appTextStyles.whiteRegular10,
-                                themeProvider.blue,
-                                const Icon(Icons.file_download_outlined,color: Colors.white,)
+                            InkWell(
+                              onTap: ()=>requestPermission(fetchAndSaveDocument(context, widget.bs.bsId, widget.bs.numBs, 'Quittance')),
+                              child: ContainerRoundedCorners(
+                                  "Quittance",
+                                  appTextStyles.whiteRegular10,
+                                  themeProvider.blue,
+                                  const Icon(Icons.file_download_outlined,color: Colors.white,)
+                              ),
                             ),
                           ],
                         )
@@ -122,6 +129,65 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
         ],
       ),
     );
+  }
+
+  void fetchAndSaveDocument(BuildContext context, int bsId, String bsNum, String type) async {
+    try {
+      File file = await bulletinViewModel.getBsDocument(bsId, bsNum, type);
+      String filepath=file.path;
+      OpenFile.open(filepath);
+      print('Document path at: $filepath');
+
+    } catch (e) {
+      print('Error fetching or saving document: $e');
+    }
+  }
+  /*
+  * Future<void> requestPermission(void Function() fetchAndSaveDocument) async {
+    const permission = Permission.storage;
+
+    if (await permission.isGranted == false) {
+      final result = await permission.request();
+      if (result.isGranted) {
+        fetchAndSaveDocument(); // Corrected: Call the function
+      } else if (result.isDenied || result.isPermanentlyDenied) {
+        // Show a SnackBar or a dialog informing the user about the need for storage permission
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cette action nécessite l\'accès au stockage.'),
+            duration: Duration(milliseconds: 3000),
+          ),
+        );
+      }
+    } else {
+      fetchAndSaveDocument(); // Already granted, directly call the function
+    }
+  }*/
+  Future<void> requestPermission(void fetchAndSaveDocument) async {
+    const permission = Permission.storage;
+
+    if (await permission.isDenied) {
+      final result = await permission.request();
+      if (result.isGranted) {
+        fetchAndSaveDocument;
+      } else if (result.isDenied) {
+        print("result.isDenied");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cette action nécessite l\'accès au stockage.'),
+            duration: Duration(milliseconds: 3000),
+          ),
+        );
+      } else if (result.isPermanentlyDenied) {
+        print("result.isPermanentlyDenied");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cette action nécessite l\'accès au stockage.'),
+            duration: Duration(milliseconds: 3000),
+          ),
+        );
+      }
+    }
   }
 
   Widget cardContent(ThemeProvider themeProvider, AppTextStyles appTextStyles, bool inProgress) {
