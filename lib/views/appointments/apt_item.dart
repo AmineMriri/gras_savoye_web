@@ -38,8 +38,8 @@ class AptItem extends StatelessWidget {
             },
           ),
           SlidableAction(
-            backgroundColor: themeProvider.uclaGold,
-            foregroundColor: Colors.white,
+            backgroundColor: themeProvider.bubbles,
+            foregroundColor: themeProvider.ateneoBlue,
             icon: Icons.email_rounded,
             padding: const EdgeInsets.all(0),
             onPressed: (BuildContext context) async {

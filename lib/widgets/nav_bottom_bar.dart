@@ -119,8 +119,7 @@ class _NavigationBottomState extends State<NavigationBottom> {
     );
   }
 }
-/*
-* import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:healio/models/responses/user/login_response.dart';
 import 'package:healio/views/appointments/appointments_screen.dart';
 import 'package:healio/views/bulletins/bulletins_screen.dart';
@@ -164,26 +163,20 @@ class _NavigationBottomState extends State<NavigationBottom> {
         activeColorPrimary: Colors.white,
         icon: Iconify(
           selectedIndex == 0 ? Ci.home_fill : Ci.home_outline,
-          color: selectedIndex == 0
-              ? themeProvider.ateneoBlue
-              : Colors.white,
+          color: Colors.white,
         ),
       ),
       PersistentBottomNavBarItem(
           activeColorPrimary: Colors.white,
           icon: Iconify(
             Carbon.stethoscope,
-            color: selectedIndex == 1
-                ? themeProvider.ateneoBlue
-                : Colors.white,
+            color: Colors.white,
           )),
       PersistentBottomNavBarItem(
         activeColorPrimary: Colors.white,
         icon: Icon(
           Icons.calendar_month_rounded,
-          color: selectedIndex == 2
-              ? themeProvider.ateneoBlue
-              : Colors.white,
+          color: Colors.white,
         ),
       ),
       PersistentBottomNavBarItem(
@@ -192,18 +185,14 @@ class _NavigationBottomState extends State<NavigationBottom> {
           selectedIndex == 3
               ? Icons.notifications_rounded
               : Icons.notifications_outlined,
-          color: selectedIndex == 3
-              ? themeProvider.ateneoBlue
-              : Colors.white,
+          color: Colors.white,
         ),
       ),
       PersistentBottomNavBarItem(
         activeColorPrimary: Colors.white,
         icon: Iconify(
           selectedIndex == 4 ? Eva.person_fill : Eva.person_outline,
-          color: selectedIndex == 4
-              ? themeProvider.ateneoBlue
-              : Colors.white,
+          color: Colors.white,
         ),
       ),
     ];
@@ -241,5 +230,4 @@ class _NavigationBottomState extends State<NavigationBottom> {
       ),
     );
   }
-}
-*/
+}*/

@@ -33,13 +33,25 @@ class _BulletinsScreenState extends State<BulletinsScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   String? userId;
-  String? name;
+  //String? name;
   List<Widget> tabs = [];
   late BulletinViewModel bulletinViewModel;
   late UserViewModel userViewModel;
   List<Bulletin> bsList = [];
-  bool isLoading = true;
-  bool isError = false;
+  List<Bulletin> bsListTraite = [];
+  List<Bulletin> bsListEnCours = [];
+  Map<String, bool> isLoadingMap = {
+    'bsList': true,
+    'bsListTraite': true,
+    'bsListEnCours': true,
+  };
+
+  Map<String, bool> isErrorMap = {
+    'bsList': false,
+    'bsListTraite': false,
+    'bsListEnCours': false,
+  };
+
   late Future<void> _userDataFuture;
   late AppTextStyles appTextStyles;
 
@@ -112,9 +124,9 @@ class _BulletinsScreenState extends State<BulletinsScreen>
             },
           ),*/
         ),
-        body: isLoading
+        body: isLoadingMap.containsValue(true)
             ? SpinKitCircle(color: themeProvider.blue, size: 50.0)
-            : isError
+            : isErrorMap.containsValue(true)
                 ? ErrorDisplayAndRefresh(appTextStyles, themeProvider,
                     () async {
                     setState(() {
@@ -125,11 +137,11 @@ class _BulletinsScreenState extends State<BulletinsScreen>
                     controller: _tabController,
                     children: [
                       BulletinList(
-                        bsList: bsList,
+                        bsList: bsListTraite,
                         onRefresh: refreshLists,
                       ),
                       BulletinList(
-                        bsList: bsList,
+                        bsList: bsListEnCours,
                         onRefresh: refreshLists,
                       ),
                       BulletinList(
@@ -164,11 +176,13 @@ class _BulletinsScreenState extends State<BulletinsScreen>
     if (userData != null) {
       if (userData['id'] != null) {
         userId = userData['id'];
-        fetchBS();
+        await fetchBS(null, 'bsList');
+        await fetchBS('traité', 'bsListTraite');
+        await fetchBS('en cours', 'bsListEnCours');
       }
-      if (userData['name'] != null) {
+      /*if (userData['name'] != null) {
         name = userData['name'];
-      }
+      }*/
       setupTabContoller();
     }
   }
@@ -226,7 +240,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
           children: [
             Text("Traité"),
             const SizedBox(width: 5),
-            customBadge(bsList.length.toString())
+            customBadge(bsListTraite.length.toString())
           ],
         ),
       ),
@@ -237,7 +251,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
           children: [
             Text("En Cours"),
             const SizedBox(width: 5),
-            customBadge(bsList.length.toString())
+            customBadge(bsListEnCours.length.toString())
           ],
         ),
       ),
@@ -263,48 +277,58 @@ class _BulletinsScreenState extends State<BulletinsScreen>
 
   Future<void> refreshLists() async {
     setState(() {
-      isLoading = true;
-      isError = false;
+      isLoadingMap['bsList'] = true;
+      isErrorMap['bsList'] = false;
+      isLoadingMap['bsListTraite'] = true;
+      isErrorMap['bsListTraite'] = false;
+      isLoadingMap['bsListEnCours'] = true;
+      isErrorMap['bsListEnCours'] = false;
     });
-    await fetchBS();
+    // Fetch data for each bulletin list separately
+    await fetchBS(null, 'bsList');
+    await fetchBS('traité', 'bsListTraite');
+    await fetchBS('en cours', 'bsListEnCours');
   }
 
-  Future<void> fetchBS() async {
+  Future<void> fetchBS(String? status, String listName) async {
     try {
-      ListBulletinsResponse bulletinResponse =
-          await bulletinViewModel.getBulletins(userId!);
-      //await bulletinViewModel.getBulletinsByStatus(userId!,"en cours");
+      List<Bulletin> fetchedList = [];
+      // Fetch bulletin list based on status
+      ListBulletinsResponse bulletinResponse = status == null
+          ? await bulletinViewModel.getBulletins(userId!)
+          : await bulletinViewModel.getBulletinsByStatus(userId!, status.trim().toLowerCase());
+
       switch (bulletinResponse.res_code) {
         case 1:
-          // retrieve bs list
-          bsList = bulletinResponse.bulletins;
-          int counter = 1;
-          setState(() {
-            setupTabContoller();
-            isLoading = false;
-            isError = false;
-          });
+          fetchedList = bulletinResponse.bulletins;
           break;
         case -1:
-          setState(() {
-            isError = true;
-            isLoading = false;
-          });
+          isErrorMap[listName] = true;
           break;
         default:
-          setState(() {
-            isError = true;
-            isLoading = false;
-          });
+          isErrorMap[listName] = true;
+          break;
       }
+
+      setState(() {
+        isLoadingMap[listName] = false;
+        if (listName == 'bsList') {
+          bsList = fetchedList;
+        } else if (listName == 'bsListTraite') {
+          bsListTraite = fetchedList;
+        } else if (listName == 'bsListEnCours') {
+          bsListEnCours = fetchedList;
+        }
+      });
     } catch (error) {
       print("Error: $error");
       setState(() {
-        isError = true;
-        isLoading = false;
+        isErrorMap[listName] = true;
+        isLoadingMap[listName] = false;
       });
     }
   }
+
 
   @override
   void dispose() {

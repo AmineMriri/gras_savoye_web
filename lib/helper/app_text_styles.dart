@@ -6,6 +6,11 @@ class AppTextStyles {
 
   AppTextStyles(this.context);
 
+  static const TextStyle _baseExtraBoldTextStyle = TextStyle(
+    fontFamily: 'Inter',
+    fontWeight: FontWeight.w800,
+  );
+
   static const TextStyle _baseBoldTextStyle = TextStyle(
     fontFamily: 'Inter',
     fontWeight: FontWeight.w700,
@@ -273,47 +278,43 @@ class AppTextStyles {
     );
   }
 
-  TextStyle get graniteGreyMedium12 {
+  TextStyle get graniteGreyBold12 {
     final themeProvider = context.themeProvider;
-    return _baseMediumTextStyle.copyWith(
+    return _baseBoldTextStyle.copyWith(
       color: themeProvider.graniteGrey,
       fontSize: 12,
     );
   }
 
-  TextStyle get graniteGreyMediumItalic10 {
+  TextStyle get graniteGreyMedium10 {
     final themeProvider = context.themeProvider;
     return _baseMediumTextStyle.copyWith(
       color: themeProvider.graniteGrey,
       fontSize: 10,
-      fontStyle: FontStyle.italic,
     );
   }
 
-  TextStyle get redBoldItalic10 {
+  TextStyle get redBold10 {
     final themeProvider = context.themeProvider;
     return _baseBoldTextStyle.copyWith(
       color: themeProvider.red,
       fontSize: 10,
-      fontStyle: FontStyle.italic,
     );
   }
 
-  TextStyle get greenBoldItalic10 {
+  TextStyle get greenBold10 {
     final themeProvider = context.themeProvider;
     return _baseBoldTextStyle.copyWith(
       color: themeProvider.spanishGreen,
       fontSize: 10,
-      fontStyle: FontStyle.italic,
     );
   }
 
-  TextStyle get redMediumItalic10 {
+  TextStyle get redMedium10 {
     final themeProvider = context.themeProvider;
     return _baseMediumTextStyle.copyWith(
       color: themeProvider.red,
       fontSize: 10,
-      fontStyle: FontStyle.italic,
     );
   }
 

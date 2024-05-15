@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
 import 'package:healio/widgets/container_rounded_corners.dart';
@@ -7,6 +8,7 @@ import 'package:open_file_plus/open_file_plus.dart';
 import 'package:provider/provider.dart';
 import '../../helper/app_text_styles.dart';
 import '../../helper/date_utils.dart';
+import '../../models/prestation.dart';
 import '../../view_models/bulletin_view_model.dart';
 import '../../widgets/custom_percent.dart';
 
@@ -123,6 +125,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
   }
 
   Widget cardContent(ThemeProvider themeProvider, AppTextStyles appTextStyles, bool inProgress) {
+    bool hasObservation = widget.bs.prestations.any((prestation) => prestation.observation != null);
     return inProgress
         ? Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -140,7 +143,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
         : Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Icon(Icons.circle_notifications_rounded, color: themeProvider.red,),
+        hasObservation ? Icon(Icons.circle_notifications_rounded, color: themeProvider.red,):Container(),
         CustomPercent(
           themeProvider: themeProvider,
           appTextStyles: appTextStyles,
@@ -156,41 +159,44 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
   }
 
   Widget buildDataTable(AppTextStyles appTextStyles, ThemeProvider themeProvider) {
-    // Simulated list of data rows
-    List<Map<String, String>> dataRows = [
-      {"prestation": "Consultations", "depense": "60,000 DT", "rembourse": "60,000 DT"},
-      {"prestation": "AKTIV MAGNESIUM VIT", "depense": "31,783 DT", "rembourse": "0,000 DT"},
-      {"prestation": "Traitements spéciaux", "depense": "60,000 DT", "rembourse": "60,000 DT"},
-    ];
-
+    final List<Prestation> prestations = widget.bs.prestations;
     bool isInProgress = widget.bs.state.toLowerCase() == "en cours";
     int numColumns = isInProgress ? 2 : 3;
 
     List<Widget> rows = [];
     rows.add(buildTitlesRow(appTextStyles, numColumns));
 
-    // Dynamic function to build rows and insert observation row based on conditions
-    for (int i = 0; i < dataRows.length; i++) {
-      // Build data row
-      Map<String, String> rowData = dataRows[i];
+    // Loop through prestations and build rows accordingly
+    for (int i = 0; i < prestations.length; i++) {
+      Prestation prestation = prestations[i];
+      // Build data row using prestation data
+      Map<String, String> rowData = {
+        "prestation": prestation.prestationName,
+        "depense": "${prestation.montant} DT",
+        "rembourse": "${prestation.pec} DT"
+      };
       Widget dataRow = buildDataRow(appTextStyles, rowData, numColumns);
       rows.add(dataRow);
 
       // Check conditions to insert observation row after specific data row
-      if (shouldInsertObservationAfterDataRow(rowData)) {
-        Widget observationRow = buildObservationRow(themeProvider, appTextStyles, "Prestation non remboursable");
+      if (prestations[i].observation!=null) {
+        Widget observationRow =
+        buildObservationRow(themeProvider, appTextStyles, "Prestation non remboursable");
         rows.add(observationRow);
       }
     }
+
     // Add divider after the last data row if there are any data rows
-    if (dataRows.isNotEmpty) {
+    if (prestations.isNotEmpty) {
       rows.add(Divider(
         color: themeProvider.bubbles,
         thickness: 1.0,
         height: 1.0,
       ));
     }
+
     rows.add(buildTotalRow(appTextStyles, numColumns));
+
     // Build the ListView with the constructed rows
     return ListView(
       shrinkWrap: true,
@@ -227,10 +233,10 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
 
   Widget buildTotalRow(AppTextStyles appTextStyles, int numColumns) {
     List<Map<String, dynamic>> totals = [
-      {"label": "238,895 DT", "textStyle": appTextStyles.redBoldItalic10},
-      {"label": "155,401 DT", "textStyle": appTextStyles.greenBoldItalic10}
+      {"label": "${widget.bs.totalDep} DT", "textStyle": appTextStyles.redBold10},
+      {"label": "${widget.bs.totalPec} DT", "textStyle": appTextStyles.greenBold10}
     ];
-    totals.insert(0, {"label": "Total", "textStyle": appTextStyles.graniteGreyMedium12});
+    totals.insert(0, {"label": "Total", "textStyle": appTextStyles.graniteGreyBold12});
 
     if (numColumns == 2) {
       totals.removeAt(2);
@@ -250,7 +256,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
         child: Text(
           text,
           textAlign: TextAlign.start,
-          style: appTextStyles.graniteGreyMediumItalic10,
+          style: appTextStyles.graniteGreyMedium10,
         ),
       ),
     );
@@ -276,7 +282,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
         child: Text(
           title,
           textAlign: TextAlign.start,
-          style: appTextStyles.graniteGreyMedium12,
+          style: appTextStyles.graniteGreyBold12,
         ),
       ),
     );
@@ -290,17 +296,11 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
           Icon(Icons.circle_notifications_rounded, color: themeProvider.red, size: 20,),
           Text(
             "Observation: $obs",
-            style: appTextStyles.redMediumItalic10,
+            style: appTextStyles.redMedium10,
           ),
         ],
       ),
     );
-  }
-
-  bool shouldInsertObservationAfterDataRow(Map<String, String> rowData) {
-    // Dynamic condition to determine if an observation row should be inserted after this data row
-    // Example: Insert observation after the first row where "depense" is greater than a certain value
-    return !isInProgress(widget.bs.state) && rowData['depense'] != null && int.parse(rowData['depense']!.replaceAll(' DT', '').replaceAll(',', '')) < 60000;
   }
 
 

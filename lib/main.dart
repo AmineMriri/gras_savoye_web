@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/view_models/appointment_view_model.dart';
@@ -14,6 +15,9 @@ import 'helper/providers/tab_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
+  /*SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor:  Color(0xff035EF7),
+  ));*/
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(

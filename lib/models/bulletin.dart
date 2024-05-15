@@ -1,3 +1,5 @@
+import 'package:healio/models/prestation.dart';
+
 class Bulletin {
   final int bsId;
   final String numBs;
@@ -10,6 +12,7 @@ class Bulletin {
   final double totalPec;
   final String state;
   final bool isCV;
+  final List<Prestation> prestations;
 
   Bulletin({
     required this.bsId,
@@ -23,6 +26,7 @@ class Bulletin {
     required this.totalPec,
     required this.state,
     required this.isCV,
+    required this.prestations,
   });
 
   factory Bulletin.fromJson(Map<String, dynamic> json) {
@@ -40,11 +44,14 @@ class Bulletin {
       totalPec: (json['total_pec'] as num?)?.toDouble() ?? 0.0,
       state: json['state'] as String? ?? '',
       isCV: json['is_cv'] as bool? ?? false,
+      prestations: (json['prestations'] as List)
+          .map((item) => Prestation.fromJson(item))
+          .toList(),
     );
   }
 
   @override
   String toString() {
-    return 'Bulletin{idBs: $bsId, numBs: $numBs, dateMaladie: $dateMaladie, dateReglement: $dateReglement, patient: $patient, prestataire: $prestataire, adherent: $adherent, totalDep: $totalDep, totalPec: $totalPec, state: $state, isCV: $isCV}';
+    return 'Bulletin{idBs: $bsId, numBs: $numBs, dateMaladie: $dateMaladie, dateReglement: $dateReglement, patient: $patient, prestataire: $prestataire, adherent: $adherent, totalDep: $totalDep, totalPec: $totalPec, state: $state, isCV: $isCV, prestations: $prestations}';
   }
 }
