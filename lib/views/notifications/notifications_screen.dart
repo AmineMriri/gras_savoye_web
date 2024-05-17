@@ -34,7 +34,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
-        backgroundColor: themeProvider.ghostWhite,
+        backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Notifications',
           icon: null,

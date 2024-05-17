@@ -35,7 +35,7 @@ class _AptDetailsScreenState extends State<AptDetailsScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
-        backgroundColor: themeProvider.ghostWhite,
+        backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: "",
           icon: IconButton(

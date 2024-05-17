@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:healio/helper/extensions/string_extensions.dart';
 import 'package:permission_handler/permission_handler.dart';import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
 import 'package:healio/widgets/container_rounded_corners.dart';
@@ -44,10 +45,18 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
               borderRadius: BorderRadius.circular(12),
               border: Border(
                 left: BorderSide(
-                  color: isInProgress(widget.bs.state) ? themeProvider.uclaGold : themeProvider.spanishGreen,
+                  color: themeProvider.ateneoBlue,
                   width: 10.0,
                 ),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 3,
+                  blurRadius: 7,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +95,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
                               child: ContainerRoundedCorners(
                                   "Contre visite",
                                   appTextStyles.whiteRegular10,
-                                  themeProvider.blue,
+                                  themeProvider.blue.withOpacity(0.6),
                                   const Icon(Icons.file_download_outlined,color: Colors.white,)
                               ),
                             ),
@@ -96,7 +105,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
                               child: ContainerRoundedCorners(
                                   "Quittance",
                                   appTextStyles.whiteRegular10,
-                                  themeProvider.blue,
+                                  themeProvider.blue.withOpacity(0.6),
                                   const Icon(Icons.file_download_outlined,color: Colors.white,)
                               ),
                             ),
@@ -121,7 +130,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
                 ),
               ),
               child: Text(
-                widget.bs.state,
+                widget.bs.state.capitalize(),
                 style: appTextStyles.whiteSemiBold10,
               ),
             ),
@@ -202,7 +211,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
         ),
         Text(
           "${widget.bs.totalDep} DT",
-          style: appTextStyles.uclaGoldSemiBold12,
+          style: appTextStyles.blueSemiBold12,
         ),
       ],
     )

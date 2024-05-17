@@ -56,7 +56,7 @@ class _BulletinDetailsScreenState extends State<BulletinDetailsScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
-        backgroundColor: themeProvider.ghostWhite,
+        backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: "",
           icon: IconButton(

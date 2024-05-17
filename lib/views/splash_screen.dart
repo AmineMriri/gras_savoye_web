@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
-      color: themeProvider.ghostWhite,
+      color: Colors.white,
       child: Center(
         child: Image.asset(
           "assets/images/app_icon.png",

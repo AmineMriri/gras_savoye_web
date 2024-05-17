@@ -100,7 +100,7 @@ class CustomYesNoDialog extends StatelessWidget {
                         decoration: BoxDecoration(
                           border: Border.all(color: primaryColor),
                           borderRadius: BorderRadius.circular(12),
-                          color: themeProvider.ghostWhite,
+                          color: Colors.white,
                         ),
                         child: Center(
                           child: Text(

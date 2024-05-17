@@ -50,7 +50,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
-        backgroundColor: themeProvider.ghostWhite,
+        backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: "",
           icon: IconButton(

@@ -213,7 +213,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
-        backgroundColor: themeProvider.ghostWhite,
+        backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: "Médecins",
           themeProvider: themeProvider, icon: null,
@@ -293,7 +293,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                 ),
               ),
               isLoading
-                  ? Expanded(child: SpinKitCircle(color: themeProvider.blue, size: 50.0,))
+                  ? Expanded(child: SpinKitCircle(color: themeProvider.blue.withOpacity(0.6), size: 50.0,))
                   : isError
                   ? ErrorDisplayAndRefresh(appTextStyles, themeProvider,
                       () async {
@@ -335,7 +335,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
               if(_totalPages>1)
                 Card(
                   margin: EdgeInsets.zero,
-                  color: themeProvider.ghostWhite,
+                  color: Colors.white,
                   child: NumberPaginator(
                     numberPages: _totalPages,
                     onPageChange: (int index) {

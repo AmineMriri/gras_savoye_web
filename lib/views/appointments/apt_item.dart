@@ -21,7 +21,7 @@ class AptItem extends StatelessWidget {
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            backgroundColor: themeProvider.blue,
+            backgroundColor: themeProvider.blue.withOpacity(0.6),
             foregroundColor: Colors.white,
             icon: Icons.directions_rounded,
             padding: const EdgeInsets.all(0),

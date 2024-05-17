@@ -40,7 +40,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
       right: false,
       bottom: true,
       child: Scaffold(
-        backgroundColor: themeProvider.ghostWhite,
+        backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: "Mes RDVs",
           themeProvider: themeProvider,

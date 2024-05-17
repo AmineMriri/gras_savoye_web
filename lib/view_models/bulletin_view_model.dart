@@ -24,6 +24,8 @@ class BulletinViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
+      print("getBulletins !!!!!!!");
+      print(result);
       final bulletinResponse = ListBulletinsResponse.fromJson(result);
       return bulletinResponse;
     } catch (e) {
@@ -46,6 +48,8 @@ class BulletinViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
+      print("getBulletinsByStatus $status !!!!!!!");
+      print(result);
       final bulletinResponse = ListBulletinsResponse.fromJson(result);
       return bulletinResponse;
     } catch (e) {
