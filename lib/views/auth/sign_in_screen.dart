@@ -68,6 +68,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Center(
                     child: SingleChildScrollView(
                       child: Container(
+                        constraints:BoxConstraints(maxWidth: 470),
                         padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -160,43 +161,48 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
 
                             ///BUTTONS
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomElevatedButton(
-                                          txt: "Se connecter",
-                                          txtStyle: appTextStyles.whiteSemiBold16,
-                                          btnColor: themeProvider.ateneoBlue,
-                                          btnWidth: double.maxFinite,
-                                          onPressed: () {
-                                            if(!_isLoading){
-                                              if (keyForm.currentState!.validate()){
-                                                keyForm.currentState!.save();
-                                                signInCall(email, password);
+                            Container(
+                              constraints:BoxConstraints(maxWidth: 270),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomElevatedButton(
+                                            txt: "Se connecter",
+                                            txtStyle: appTextStyles.whiteSemiBold16,
+                                            btnColor: themeProvider.ateneoBlue,
+                                            btnWidth: double.maxFinite,
+                                            onPressed: () {
+                                              if(!_isLoading){
+                                                if (keyForm.currentState!.validate()){
+                                                  keyForm.currentState!.save();
+                                                  signInCall(email, password);
+                                                }
                                               }
-                                            }
-                                          }),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                GestureDetector(
-                                  onTap: () => Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ForgotPwdScreen())),
-                                  child: Text(
-                                    "Mot de passe oublié ?",
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        appTextStyles.graniteGreyRegularUnderline14,
+                                            }),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ForgotPwdScreen())),
+                                    child: Text(
+                                      "Mot de passe oublié ?",
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          appTextStyles.graniteGreyRegularUnderline14,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             )
                           ],
                         ),
@@ -226,7 +232,18 @@ class _SignInScreenState extends State<SignInScreen> {
       _isLoading = true;
     });
     try {
-      LoginResponse loginResponse=await userViewModel.signIn(email, password);
+      // LoginResponse loginResponse=await userViewModel.signIn(email, password);
+      print(email+password);
+
+      /// TRY ME STATIC LOGIN
+      LoginResponse loginResponse = LoginResponse(
+        res_code: 1,
+        id: '82292',
+        name: 'MOHAMED',
+        conjoint: 'SONIA',
+        child: true,
+        parent: false,
+      );
       switch (loginResponse.res_code) {
         case 1:
         // Save user id to shared pref

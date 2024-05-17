@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/extensions/string_extensions.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
+import 'package:healio/models/prestation.dart';
 import 'package:healio/models/responses/bulletin/list_bulletins_response.dart';
 import 'package:healio/view_models/bulletin_view_model.dart';
 import 'package:healio/view_models/user_view_model.dart';
@@ -10,6 +11,7 @@ import 'package:healio/views/auth/sign_in_screen.dart';
 import 'package:healio/views/bulletins/attach_bulletin_screen.dart';
 import 'package:healio/views/bulletins/bulletin_list.dart';
 import 'package:healio/views/bulletins/bulletins_archive_screen.dart';
+import 'package:healio/views/responsive.dart';
 import 'package:healio/widgets/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -98,6 +100,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
         appBar: CustomAppBar(
           title: "Mes Bulletins",
           themeProvider: themeProvider,
+
           tabBar: TabBar(
                   isScrollable: true,
                   controller: _tabController,
@@ -107,13 +110,14 @@ class _BulletinsScreenState extends State<BulletinsScreen>
                   tabs: tabs,
                   tabAlignment: TabAlignment.center,
                 ),
-          trailing: CustomAppBarButton(
+          trailing: Responsive.isMobile(context)?CustomAppBarButton(
             iconData: Icons.logout_rounded,
             themeProvider: themeProvider,
             onPressed: () {
               userViewModel.performLogout(context);
             },
-          ), icon: null,
+          ):null,
+          icon: null,
           /*trailing: CustomAppBarButton(
             iconData: Icons.archive_rounded,
             themeProvider: themeProvider,
@@ -133,23 +137,28 @@ class _BulletinsScreenState extends State<BulletinsScreen>
                       refreshLists();
                     });
                   })
-                : TabBarView(
-                    controller: _tabController,
-                    children: [
-                      BulletinList(
-                        bsList: bsListTraite,
-                        onRefresh: refreshLists,
-                      ),
-                      BulletinList(
-                        bsList: bsListEnCours,
-                        onRefresh: refreshLists,
-                      ),
-                      BulletinList(
-                        bsList: bsList,
-                        onRefresh: refreshLists,
-                      ),
-                    ],
-                  ),
+
+                : Container(
+                  padding:Responsive.isMobile(context)?null:
+                  EdgeInsets.symmetric(horizontal: 40),
+                  child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        BulletinList(
+                          bsList: bsList,
+                          onRefresh: refreshLists,
+                        ),
+                        BulletinList(
+                          bsList: bsList,
+                          onRefresh: refreshLists,
+                        ),
+                        BulletinList(
+                          bsList: bsList,
+                          onRefresh: refreshLists,
+                        ),
+                      ],
+                    ),
+                ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: themeProvider.ateneoBlue,
           elevation: 0,
@@ -185,6 +194,25 @@ class _BulletinsScreenState extends State<BulletinsScreen>
       }*/
       setupTabContoller();
     }
+// =======
+    // if (widget.loginResponse != null) {
+    //   userData = getUserDataFromPreviousScreen();
+    // } else {
+    //   userData = await getUserDataFromSharedPref();
+    // }
+    // if (userData != null) {
+    //   if (userData['id'] != null) {
+    //     userId = userData['id'];
+    //     fetchBS();
+    //   }
+    //   if (userData['name'] != null) {
+    //     name = userData['name'];
+    //   }
+    //   setupTabContoller();
+    // }
+    // fetchBS();
+    // setupTabContoller();
+// >>>>>>> web
   }
 
   Map<String, dynamic>? getUserDataFromPreviousScreen() {
@@ -293,10 +321,334 @@ class _BulletinsScreenState extends State<BulletinsScreen>
   Future<void> fetchBS(String? status, String listName) async {
     try {
       List<Bulletin> fetchedList = [];
-      // Fetch bulletin list based on status
-      ListBulletinsResponse bulletinResponse = status == null
-          ? await bulletinViewModel.getBulletins(userId!)
-          : await bulletinViewModel.getBulletinsByStatus(userId!, status.trim().toLowerCase());
+//       // Fetch bulletin list based on status
+//       ListBulletinsResponse bulletinResponse = status == null
+//           ? await bulletinViewModel.getBulletins(userId!)
+//           : await bulletinViewModel.getBulletinsByStatus(userId!, status.trim().toLowerCase());
+
+      ListBulletinsResponse bulletinResponse = ListBulletinsResponse(
+        res_code: 1,
+        bulletins: [
+          /// MOHAMED
+          Bulletin(
+            bsId: 490259,
+            numBs: "240001550",
+            dateMaladie: DateTime(2024, 04, 01).toString(),
+            dateReglement: '',
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "adherent",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 350.0,
+            totalPec: 212.0,
+            state: "En cours",
+            isCV: false, 
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "adherent",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "adherent",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "adherent",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "adherent",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "adherent",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "adherent",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          ///SONIA
+          Bulletin(
+            bsId: 490259,
+            numBs: "240001550",
+            dateMaladie: DateTime(2024, 04, 01).toString(),
+            dateReglement: '',
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "conjoint",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 350.0,
+            totalPec: 212.0,
+            state: "En cours",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "conjoint",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "conjoint",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "conjoint",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "conjoint",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "conjoint",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "conjoint",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          /// ENFANT
+          Bulletin(
+            bsId: 490259,
+            numBs: "240001550",
+            dateMaladie: DateTime(2024, 04, 01).toString(),
+            dateReglement: '',
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "enfant",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 350.0,
+            totalPec: 212.0,
+            state: "En cours",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "enfants",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "enfants",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "enfants",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "enfants",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "enfants",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+          Bulletin(
+            bsId: 250563,
+            numBs: "1708700",
+            dateMaladie: DateTime(2023, 12, 21).toString(),
+            dateReglement: DateTime(2024, 2, 16).toString(),
+            patient: "SAHRAOUI MOHAMED",
+            prestataire: "enfants",
+            adherent: "SAHRAOUI MOHAMED",
+            totalDep: 210.647,
+            totalPec: 177.582,
+            state: "Traité",
+            isCV: false,
+            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
+
+          ),
+
+        ],
+      );
 
       switch (bulletinResponse.res_code) {
         case 1:

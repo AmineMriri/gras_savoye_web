@@ -7,7 +7,8 @@ import '../models/responses/doctor/list_doctors_response.dart';
 
 class DoctorViewModel with ChangeNotifier {
   OdooClient clientLocal = OdooClient(AppConfig.localServerUrl);
-  String dbName='odoo_test';
+  // String dbName='odoo_test';
+  String dbName='gras_savoye';
 
   Future<ListDoctorsResponse> getDoctors(int page, int pageSize) async {
     try {

@@ -59,6 +59,13 @@ class AppTextStyles {
       fontSize: 16,
     );
   }
+  TextStyle get ateneoBlueBold24 {
+    final themeProvider = context.themeProvider;
+    return _baseBoldTextStyle.copyWith(
+      color: themeProvider.ateneoBlue,
+      fontSize: 24,
+    );
+  }
 
   TextStyle get ateneoBlueBold20 {
     final themeProvider = context.themeProvider;
@@ -139,7 +146,13 @@ class AppTextStyles {
       fontSize: 16,
     );
   }
-
+  TextStyle get onyxSemiBold18 {
+    final themeProvider = context.themeProvider;
+    return _baseSemiBoldTextStyle.copyWith(
+      color: themeProvider.onyx,
+      fontSize: 18,
+    );
+  }
   TextStyle get bubblesSemiBold14 {
     final themeProvider = context.themeProvider;
     return _baseSemiBoldTextStyle.copyWith(
@@ -163,7 +176,13 @@ class AppTextStyles {
       fontSize: 12,
     );
   }
-
+  TextStyle get uclaGoldSemiBold16 {
+    final themeProvider = context.themeProvider;
+    return _baseSemiBoldTextStyle.copyWith(
+      color: themeProvider.uclaGold,
+      fontSize: 16,
+    );
+  }
   TextStyle get spanishGreenSemiBold12 {
     final themeProvider = context.themeProvider;
     return _baseSemiBoldTextStyle.copyWith(
@@ -293,8 +312,44 @@ class AppTextStyles {
       fontSize: 10,
     );
   }
-
+  TextStyle get graniteGreyMedium14 {
+    final themeProvider = context.themeProvider;
+    return _baseMediumTextStyle.copyWith(
+      color: themeProvider.graniteGrey,
+      fontSize: 10,
+    );
+  }
   TextStyle get redBold10 {
+    final themeProvider = context.themeProvider;
+    return _baseBoldTextStyle.copyWith(
+      color: themeProvider.red,
+      fontSize: 10,
+    );
+  }
+  TextStyle get redBold14 {
+    final themeProvider = context.themeProvider;
+    return _baseBoldTextStyle.copyWith(
+      color: themeProvider.red,
+      fontSize: 10,
+    );
+  }
+  TextStyle get graniteGreyMediumItalic12 {
+    final themeProvider = context.themeProvider;
+    return _baseMediumTextStyle.copyWith(
+      color: themeProvider.graniteGrey,
+      fontSize: 12,
+      fontStyle: FontStyle.italic,
+    );
+  }
+  TextStyle get graniteGreyMediumItalic14 {
+    final themeProvider = context.themeProvider;
+    return _baseMediumTextStyle.copyWith(
+      color: themeProvider.graniteGrey,
+      fontSize: 14,
+      fontStyle: FontStyle.italic,
+    );
+  }
+  TextStyle get redBoldItalic10 {
     final themeProvider = context.themeProvider;
     return _baseBoldTextStyle.copyWith(
       color: themeProvider.red,
@@ -309,6 +364,13 @@ class AppTextStyles {
       fontSize: 10,
     );
   }
+  TextStyle get greenBold14 {
+    final themeProvider = context.themeProvider;
+    return _baseBoldTextStyle.copyWith(
+      color: themeProvider.spanishGreen,
+      fontSize: 10,
+    );
+  }
 
   TextStyle get redMedium10 {
     final themeProvider = context.themeProvider;
@@ -317,7 +379,13 @@ class AppTextStyles {
       fontSize: 10,
     );
   }
-
+  TextStyle get redMedium12 {
+    final themeProvider = context.themeProvider;
+    return _baseMediumTextStyle.copyWith(
+      color: themeProvider.red,
+      fontSize: 10,
+    );
+  }
 
   TextStyle get greyLight13 {
     return _baseLightTextStyle.copyWith(

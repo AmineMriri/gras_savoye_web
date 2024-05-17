@@ -1,5 +1,6 @@
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:healio/views/responsive.dart';
 import '../helper/app_text_styles.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -45,7 +46,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       elevation: 0,
       title: Text(
         widget.title,
-        style: appTextStyles.ateneoBlueBold20,
+        style: Responsive.isMobile(context)?appTextStyles.ateneoBlueBold20:appTextStyles.ateneoBlueBold24,
       ),
       centerTitle: true,
       leading: Row(

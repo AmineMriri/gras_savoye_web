@@ -4,6 +4,8 @@ import 'package:healio/views/appointments/appointments_screen.dart';
 import 'package:healio/views/bulletins/bulletins_screen.dart';
 import 'package:healio/views/doctors/doctors_screen.dart';
 import 'package:healio/views/notifications/notifications_screen.dart';
+import 'package:healio/views/responsive.dart';
+import 'package:healio/widgets/Drawer.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/carbon.dart';
 import 'package:iconify_flutter/icons/ci.dart';
@@ -89,6 +91,12 @@ class _NavigationBottomState extends State<NavigationBottom> {
 
   int selectedIndex = 0;
 
+  void updateSelectedIndex(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeProvider themeProvider = context.themeProvider;
@@ -101,7 +109,7 @@ class _NavigationBottomState extends State<NavigationBottom> {
         right: false,
         bottom: true,
         child: Scaffold(
-          body: PersistentTabView(
+          body: Responsive.isMobile(context)?PersistentTabView(
             context,
             controller: tabProvider.controller,
             screens: _buildScreen(),
@@ -113,6 +121,37 @@ class _NavigationBottomState extends State<NavigationBottom> {
             },
             navBarHeight: 65,
             backgroundColor: Colors.white,
+
+          )
+              :Row(
+            children: [
+              Expanded(
+                  flex: 1,
+                  child:  MyDrawer(onItemSelected:  updateSelectedIndex)
+              ),
+              Expanded(
+                flex: 10,
+                child: IndexedStack(
+                  index: selectedIndex,
+                  children: _buildScreen(),
+                ),
+              ),
+              Responsive.isDesktop(context)?
+              Expanded(
+
+                flex: 4,
+                  child:
+              SizedBox(
+                // child: Container(
+                //   decoration: BoxDecoration(
+                //       color : themeProvider.ghostWhite
+                //
+                //   ),
+                // ),
+                child: ProfileScreen(),
+              )
+              ):SizedBox()
+            ],
           ),
         ),
       ),
