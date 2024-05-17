@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: SpinKitCircle(
-                color: themeProvider.blue,
+                color: themeProvider.blue.withOpacity(0.6),
                 size: 50.0
             ),);
         } else if (snapshot.hasError) {
@@ -75,8 +75,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: RefreshIndicator(
         onRefresh: refreshBSDetails,
         child: Scaffold(
-          backgroundColor: themeProvider.ghostWhite,
+          backgroundColor: Colors.white,
           appBar: Responsive.isDesktop(context)?null:CustomAppBar(
+
             title: "Mon Profil",
             icon: null,
             trailing: CustomAppBarButton(
@@ -90,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           body: isLoading ? Center(
             child: SpinKitCircle(
-                color: themeProvider.blue,
+                color: themeProvider.blue.withOpacity(0.6),
                 size: 50.0
             ),
           )

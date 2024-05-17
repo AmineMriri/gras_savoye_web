@@ -34,12 +34,24 @@ class CustomPercent extends StatelessWidget {
         const SizedBox(
           height: 10,
         ),
-        LinearPercentIndicator(
-          lineHeight: 8,
-          percent: totalPec/totalDep,
-          barRadius: const Radius.circular(12),
-          backgroundColor: themeProvider.red,
-          progressColor: themeProvider.spanishGreen,
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                offset: Offset(0, 4), // Vertical shadow offset
+                blurRadius:7, // Blur radius changes position of shadow
+              ),
+            ],
+          ),
+          child: LinearPercentIndicator(
+            lineHeight: 8,
+            percent: totalPec/totalDep,
+            barRadius: const Radius.circular(12),
+
+            backgroundColor: themeProvider.blue.withOpacity(0.6),
+            progressColor: themeProvider.ateneoBlue.withOpacity(0.9),
+          ),
         ),
       ],
     );

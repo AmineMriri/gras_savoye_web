@@ -24,6 +24,14 @@ class CustomAptItemContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 3,
+            blurRadius: 7,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +87,7 @@ class CustomAptItemContainer extends StatelessWidget {
                             ContainerRoundedCorners(
                                 "5 Km",
                                 appTextStyles.whiteSemiBold10,
-                                themeProvider.blue,
+                                themeProvider.blue.withOpacity(0.6),
                                 null),
                           ],
                         ),

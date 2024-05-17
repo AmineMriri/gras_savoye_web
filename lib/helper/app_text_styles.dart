@@ -183,6 +183,15 @@ class AppTextStyles {
       fontSize: 16,
     );
   }
+
+  TextStyle get blueSemiBold12 {
+    final themeProvider = context.themeProvider;
+    return _baseSemiBoldTextStyle.copyWith(
+      color: themeProvider.blue.withOpacity(0.6),
+      fontSize: 12,
+    );
+  }
+
   TextStyle get spanishGreenSemiBold12 {
     final themeProvider = context.themeProvider;
     return _baseSemiBoldTextStyle.copyWith(

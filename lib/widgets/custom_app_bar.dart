@@ -42,7 +42,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     AppTextStyles appTextStyles = AppTextStyles(context);
     final themeProvider = widget.themeProvider;
     return AppBar(
-      backgroundColor: themeProvider.ghostWhite,
+      backgroundColor: Colors.white,
       elevation: 0,
       title: Text(
         widget.title,

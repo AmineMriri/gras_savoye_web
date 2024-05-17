@@ -56,7 +56,7 @@ class _SignInScreenState extends State<SignInScreen> {
           return true;
         },
         child: Scaffold(
-          backgroundColor: themeProvider.ghostWhite,
+          backgroundColor: Colors.white,
           body: Stack(
             children: [
               ConstrainedBox(
@@ -216,7 +216,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   color: Colors.black.withOpacity(0.2),
                   child: Center(
                     child: SpinKitCircle(
-                      color: themeProvider.blue,
+                      color: themeProvider.blue.withOpacity(0.6),
                       size: 50.0
                     ),
                   ),

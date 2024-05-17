@@ -37,13 +37,13 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           builder: (BuildContext context, Widget? child) {
             return DatePickerTheme(
               data: DatePickerThemeData(
-                  backgroundColor: widget.themeProvider.ghostWhite,
+                  backgroundColor: Colors.white,
                   headerForegroundColor: Colors.white,
                   headerBackgroundColor: widget.themeProvider.ateneoBlue,
                   elevation: 0,
                   dayForegroundColor: MaterialStateProperty.resolveWith((states) {
                     if (states.contains(MaterialState.selected)) {
-                      return widget.themeProvider.ghostWhite;
+                      return Colors.white;
                     }
                     return widget.themeProvider.onyx;
                   }),
@@ -51,7 +51,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                     if (states.contains(MaterialState.selected)) {
                       return widget.themeProvider.ateneoBlue;
                     }
-                    return widget.themeProvider.ghostWhite;
+                    return Colors.white;
                   }),
                   dayOverlayColor: MaterialStateProperty.resolveWith((states) {
                     if (states.contains(MaterialState.selected)) {
@@ -63,11 +63,11 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                     if (states.contains(MaterialState.selected)) {
                       return widget.themeProvider.ateneoBlue;
                     }
-                    return widget.themeProvider.ghostWhite;
+                    return Colors.white;
                   }),
                   todayForegroundColor: MaterialStateProperty.resolveWith((states) {
                     if (states.contains(MaterialState.selected)) {
-                      return widget.themeProvider.ghostWhite;
+                      return Colors.white;
                     }
                     return widget.themeProvider.ateneoBlue;
                   }),

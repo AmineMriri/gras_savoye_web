@@ -59,10 +59,10 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
           ),
           automaticallyImplyLeading: false,
           centerTitle: true,
-          backgroundColor: themeProvider.ghostWhite,
+          backgroundColor: Colors.white,
           elevation: 0,
         ),
-        backgroundColor: themeProvider.ghostWhite,
+        backgroundColor: Colors.white,
         body: Stack(
           children: [
             ConstrainedBox(
@@ -171,7 +171,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
                 color: Colors.black.withOpacity(0.2),
                 child: Center(
                   child: SpinKitCircle(
-                      color: themeProvider.blue,
+                      color: themeProvider.blue.withOpacity(0.6),
                       size: 50.0
                   ),
                 ),

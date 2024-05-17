@@ -58,7 +58,7 @@ Widget build (BuildContext context){
     height: MediaQuery.of(context).size.height,
     // decoration: BoxDecoration(color: appTheme.blueGray),
     decoration: BoxDecoration(
-        color : themeProvider.ghostWhite
+        color : Colors.white
     ),
 
     child: Container(

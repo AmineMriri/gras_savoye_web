@@ -14,7 +14,7 @@ class CustomYesNoBottomSheet {
   }) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: themeProvider.ghostWhite,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(25.0),

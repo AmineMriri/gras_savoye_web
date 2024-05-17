@@ -153,7 +153,7 @@ class _AddAptScreenState extends State<AddAptScreen> {
         right: false,
         bottom: true,
         child: Scaffold(
-            backgroundColor: themeProvider.ghostWhite,
+            backgroundColor: Colors.white,
             appBar: CustomAppBar(
               title: "Prise de RDV",
               icon: IconButton(
@@ -171,7 +171,7 @@ class _AddAptScreenState extends State<AddAptScreen> {
             body: Stack(
               children: [
                 isLoadingDays
-                    ? SpinKitCircle(color: themeProvider.blue, size: 50.0,)
+                    ? SpinKitCircle(color: themeProvider.blue.withOpacity(0.6), size: 50.0,)
                     : isErrorDays
                     ? ErrorDisplayAndRefresh(appTextStyles, themeProvider,
                         () async {
@@ -302,7 +302,7 @@ class _AddAptScreenState extends State<AddAptScreen> {
                     color: Colors.black.withOpacity(0.2),
                     child: Center(
                       child: SpinKitCircle(
-                          color: themeProvider.blue,
+                          color: themeProvider.blue.withOpacity(0.6),
                           size: 50.0
                       ),
                     ),

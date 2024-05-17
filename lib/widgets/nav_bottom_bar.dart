@@ -102,7 +102,7 @@ class _NavigationBottomState extends State<NavigationBottom> {
     ThemeProvider themeProvider = context.themeProvider;
     final tabProvider = Provider.of<TabProvider>(context, listen: false);
     return Container(
-      color: themeProvider.ghostWhite,
+      color: Colors.white,
       child: SafeArea(
         top: true,
         left: false,
