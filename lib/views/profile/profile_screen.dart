@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
+import 'package:healio/models/family_member.dart';
+import 'package:healio/views/responsive.dart';
 import 'package:healio/widgets/custom_card.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -72,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onRefresh: refreshBSDetails,
         child: Scaffold(
           backgroundColor: themeProvider.ghostWhite,
-          appBar: CustomAppBar(
+          appBar: Responsive.isDesktop(context)?null:CustomAppBar(
             title: "Mon Profil",
             icon: null,
             trailing: CustomAppBarButton(
@@ -103,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     const SizedBox(
-                      height: 40,
+                      height: 110,
                     ),
                     ///HEADING
                     Center(
@@ -318,7 +322,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> fetchProfile() async {
     try {
-      GetProfileResponse getProfileResponse=await userViewModel.getProfile(int.parse(userId!));
+      // GetProfileResponse getProfileResponse=await userViewModel.getProfile(int.parse(userId!));
+      // print(getProfileResponse.res_code);
+      // print(getProfileResponse.matricule);
+      // print(getProfileResponse.name);
+      // print(getProfileResponse.etablissement);
+      // print(getProfileResponse.assurance);
+      // print(getProfileResponse.birthdate);
+      // print(getProfileResponse.login);
+      // print(getProfileResponse.conjoint);
+      // print(getProfileResponse.enfants);
+      // print(getProfileResponse.parent);
+/*
+I/flutter (28878): 1
+matricule1101
+I/flutter (28878): MOHAMED SAHRAOUI
+I/flutter (28878): BENETTON INDUSTRIELLE TUNISIE SARL
+I/flutter (28878): BH ASSURANCES
+I/flutter (28878): 1973-01-15
+I/flutter (28878): meriambenida@gmail.com
+I/flutter (28878): Family member: {name: SONIA ELJEBRI SAHRAOUI, birthdate: 1978-07-10}
+I/flutter (28878): [Family member: {name: MARIEM SAHRAOUI, birthdate: 2006-06-17}, Family member: {name: MARAM SAHRAOUI, birthdate: 2006-06-17}, Family member: {name: NERMINE SAHRAOUI, birthdate: 2008-12-03}, Family member: {name: SIRINE SAHRAOUI, birthdate: 2014-12-24}, Family member: {name: TAHA SAHRAOUI, birthdate: 2016-07-15}]
+I/flutter (28878): []
+* */
+      GetProfileResponse getProfileResponse = GetProfileResponse(
+        res_code: 1,
+        matricule: "1101",
+        name: "MOHAMED SAHRAOUI",
+        etablissement: "BENETTON INDUSTRIELLE TUNISIE SARL",
+        assurance: "BH ASSURANCES",
+        birthdate: "1973-01-15",
+        login: "meriambenida@gmail.com",
+        conjoint: FamilyMember(
+            name: "SONIA ELJEBRI SAHRAOUI",
+            birthdate: "1978-07-10"
+        ),
+        enfants: [
+          FamilyMember(name: "Mariem SAHRAOUI", birthdate: "2006-06-17"),
+          FamilyMember(name: "MARAM SAHRAOUI", birthdate: "2006-06-17"),
+          FamilyMember(name: "NERMINE SAHRAOUI", birthdate: "2008-12-03"),
+          FamilyMember(name: "SIRINE SAHRAOUI", birthdate: "2014-12-24"),
+          FamilyMember(name: "TAHA SAHRAOUI", birthdate: "2016-07-15"),
+
+        ],
+        parent: [],
+      );
       switch (getProfileResponse.res_code) {
         case 1:
           profileData=getProfileResponse;

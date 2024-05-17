@@ -3,6 +3,8 @@ import 'package:healio/helper/app_text_styles.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
+import '../views/responsive.dart';
+
 class CustomPercent extends StatelessWidget {
   final ThemeProvider themeProvider;
   final AppTextStyles appTextStyles;
@@ -21,11 +23,11 @@ class CustomPercent extends StatelessWidget {
           children: [
             Text(
               "$totalPec DT / ",
-              style: appTextStyles.ateneoBlueSemiBold12,
+              style: Responsive.isMobile(context)?appTextStyles.ateneoBlueSemiBold12:appTextStyles.ateneoBlueSemiBold14,
             ),
             Text(
               "$totalDep DT",
-              style: appTextStyles.redSemiBold12,
+              style:Responsive.isMobile(context)?appTextStyles.redSemiBold12:appTextStyles.redSemiBold14,
             ),
           ],
         ),

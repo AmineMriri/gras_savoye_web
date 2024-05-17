@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/views/bulletins/expandable_bs_item.dart';
+import 'package:healio/views/responsive.dart';
 import '../../helper/app_text_styles.dart';
 import '../../models/bulletin.dart';
 import '../../widgets/custom_date_picker.dart';
@@ -69,6 +70,7 @@ class _BulletinListState extends State<BulletinList> {
                             themeProvider: themeProvider,
                             onChanged: null,
                           ),
+
                           const SizedBox(
                             height: 20,
                           ),
@@ -120,7 +122,7 @@ class _BulletinListState extends State<BulletinList> {
                         itemBuilder: (context, index) {
                           final bs = filteredBsList[index];
                           return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            margin: Responsive.isMobile(context)?EdgeInsets.symmetric(horizontal:15):EdgeInsets.symmetric(horizontal:80),
                             padding: const EdgeInsets.symmetric(vertical: 3),
                             child: ExpandableBulletinItem(bs: bs),
                           );

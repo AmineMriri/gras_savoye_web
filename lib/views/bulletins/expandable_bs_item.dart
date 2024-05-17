@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/bulletin.dart';
+import 'package:healio/views/responsive.dart';
 import 'package:healio/widgets/container_rounded_corners.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:provider/provider.dart';
@@ -51,7 +52,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
               children: [
                 Text(
                   "N°: ${widget.bs.numBs}",
-                  style: appTextStyles.onyxSemiBold14,
+                  style: Responsive.isMobile(context)?appTextStyles.onyxSemiBold14:appTextStyles.onyxSemiBold18,
                 ),
                 const SizedBox(height: 20),
                 cardContent(themeProvider, appTextStyles, isInProgress(widget.bs.state)),
@@ -61,7 +62,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
                   children: [
                     Text(
                       formatDate(widget.bs.dateMaladie),
-                      style: appTextStyles.ateneoBlueRegular12,
+                      style: Responsive.isMobile(context)?appTextStyles.ateneoBlueRegular12:appTextStyles.ateneoBlueRegular14,
                     ),
                     Icon(
                       _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
@@ -129,11 +130,11 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
       children: [
         Text(
           "Montant dépensé : ",
-          style: appTextStyles.onyxSemiBold12,
+          style: Responsive.isMobile(context)?appTextStyles.onyxSemiBold12:appTextStyles.onyxSemiBold16,
         ),
         Text(
           "${widget.bs.totalDep} DT",
-          style: appTextStyles.uclaGoldSemiBold12,
+          style: Responsive.isMobile(context)?appTextStyles.uclaGoldSemiBold12:appTextStyles.uclaGoldSemiBold16,
         ),
       ],
     )
@@ -227,8 +228,8 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
 
   Widget buildTotalRow(AppTextStyles appTextStyles, int numColumns) {
     List<Map<String, dynamic>> totals = [
-      {"label": "238,895 DT", "textStyle": appTextStyles.redBoldItalic10},
-      {"label": "155,401 DT", "textStyle": appTextStyles.greenBoldItalic10}
+      {"label": "238,895 DT", "textStyle": Responsive.isMobile(context)?appTextStyles.graniteGreyMediumItalic10:appTextStyles.graniteGreyMediumItalic14},
+      {"label": "155,401 DT", "textStyle": Responsive.isMobile(context)?appTextStyles.graniteGreyMediumItalic10:appTextStyles.graniteGreyMediumItalic14}
     ];
     totals.insert(0, {"label": "Total", "textStyle": appTextStyles.graniteGreyMedium12});
 
@@ -250,7 +251,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
         child: Text(
           text,
           textAlign: TextAlign.start,
-          style: appTextStyles.graniteGreyMediumItalic10,
+          style: Responsive.isMobile(context)?appTextStyles.graniteGreyMediumItalic10:appTextStyles.graniteGreyMediumItalic14,
         ),
       ),
     );
@@ -290,7 +291,7 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
           Icon(Icons.circle_notifications_rounded, color: themeProvider.red, size: 20,),
           Text(
             "Observation: $obs",
-            style: appTextStyles.redMediumItalic10,
+            style:Responsive.isMobile(context)?appTextStyles.graniteGreyMediumItalic10:appTextStyles.graniteGreyMediumItalic12,
           ),
         ],
       ),
