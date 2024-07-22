@@ -14,6 +14,10 @@ import '../../view_models/user_view_model.dart';
 import '../../widgets/custom_dropdown_button.dart';
 import '../../widgets/custom_info_dialog.dart';
 import '../../widgets/nav_bottom_bar.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:xml_rpc/client.dart' as xml_rpc;
+
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -227,23 +231,28 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     );
   }
+  ///////////////////////////////////////////////////////////////////////////////////////
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////
   void signInCall(String email, String password) async {
     setState(() {
       _isLoading = true;
     });
     try {
-      // LoginResponse loginResponse=await userViewModel.signIn(email, password);
+      LoginResponse loginResponse=await userViewModel.signIn(email, password);
       print(email+password);
 
       /// TRY ME STATIC LOGIN
-      LoginResponse loginResponse = LoginResponse(
-        res_code: 1,
-        id: '82292',
-        name: 'MOHAMED',
-        conjoint: 'SONIA',
-        child: true,
-        parent: false,
-      );
+      // LoginResponse loginResponse = LoginResponse(
+      //   res_code: 1,
+      //   id: '82292',
+      //   name: 'MOHAMED',
+      //   conjoint: 'SONIA',
+      //   child: true,
+      //   parent: false,
+      // );
       switch (loginResponse.res_code) {
         case 1:
         // Save user id to shared pref
@@ -321,6 +330,8 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
+  ///////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////
   void saveUserData(LoginResponse loginResponse) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (loginResponse.id != null) {

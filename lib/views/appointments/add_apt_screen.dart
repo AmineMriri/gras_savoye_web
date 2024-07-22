@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/appointment.dart';
@@ -7,6 +9,7 @@ import 'package:healio/models/responses/appointment/av_dates_response.dart';
 import 'package:healio/models/responses/appointment/av_time_slots_response.dart';
 import 'package:healio/models/responses/appointment/book_apt_reponse.dart';
 import 'package:healio/view_models/appointment_view_model.dart';
+import 'package:healio/views/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../helper/app_text_styles.dart';
@@ -185,7 +188,9 @@ class _AddAptScreenState extends State<AddAptScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Form(
                       key: _formKey,
-                      child: Column(
+                      child: Responsive.isMobile(context)?
+                          /////////////////////////////////////MOBILE//////////////////////////////////
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(
@@ -293,7 +298,211 @@ class _AddAptScreenState extends State<AddAptScreen> {
                             height: 15,
                           ),
                         ],
-                      ),
+                      )
+                      ///////////////////////////////////////TABLET OR DESKTOP ////////////////////
+                          :Column(
+                            children: [
+                              SizedBox(height: 30,),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: SizedBox(),
+                                  ),
+                                  Expanded(
+                                    flex: 10,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: 45,),
+                                        Text("Sélectionnez une date :",
+                                            style: appTextStyles.onyxSemiBold16),
+                                        const SizedBox(height: 45),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: calendar(themeProvider, appTextStyles),
+                                        ),
+                                        errorWidget(appTextStyles, "Veuillez sélectionner une date :", _selectedDayError),
+                                        const SizedBox(
+                                          height: 30,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: SizedBox(),
+                                  ),
+                                  Expanded(
+                                    flex: 10,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            flex: 1,
+                                            child: SizedBox()
+                                        ),
+                                        Expanded(
+                                          flex: 6,
+                                          child: Text("Patient :",
+                                              style: appTextStyles.onyxSemiBold16),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                            child: SizedBox()
+                                        ),
+                                        Expanded(
+                                          flex: 10,
+                                          child: CustomSearchDropdown(
+                                            list: patientsList,
+                                            themeProvider: themeProvider,
+                                            appTextStyles: appTextStyles,
+                                            hint: 'Choisissez le patient',
+                                            notFoundString: 'Aucun',
+                                            onValueChanged: (selectedValue) {
+                                              _selectedPatient=selectedValue;
+                                              setState(() {
+                                                _selectedPatientError=false;
+                                              });
+                                              print('Selected patient value: $_selectedPatient');
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                            flex: 1,
+                                            child: SizedBox()
+                                        )
+
+                                      ],),
+                                    errorWidget(appTextStyles, "Veuillez sélectionner le patient", _selectedPatientError),
+                                    const SizedBox(
+                                      height: 50,
+                                    ),
+
+                                    isSlotsHidden ? Container() :
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Sélectionnez un créneau",
+                                          style: appTextStyles.onyxSemiBold16,
+                                        ),
+                                        const SizedBox(height: 15),
+                                        isLoadingSlots ? Container(
+                                          margin: const EdgeInsets.only(bottom: 30),
+                                          alignment: Alignment.center,
+                                          child: CircularProgressIndicator(color: themeProvider.blue,),
+                                        ) : _buildTimeList(themeProvider, appTextStyles, width),
+                                        errorWidget(appTextStyles, "Veuillez sélectionner un créneau", _selectedTimeError),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                      ],
+                                    ),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            flex: 1,
+                                            child: SizedBox()
+                                        ),
+                                        Expanded(
+                                          flex: 20,
+                                          child: Text("Saisissez le motif du RDV :",
+                                              style: appTextStyles.onyxSemiBold16),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 40),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                            child: SizedBox()
+                                        ),
+                                        Expanded(
+                                          flex: 20,
+                                          child: CustomMultilineTextField(
+                                            themeProvider: themeProvider,
+                                            textInputAction: TextInputAction.next,
+                                            hint: 'Exemple: "bilan de santé annuel"',
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return "Veuillez saisir le motif";
+                                              }  else if (value.length < 20) {
+                                                return 'Le motif doit contenir au moins 20 caractères';
+                                              } else {
+                                                return null;
+                                              }
+                                            },
+                                            onSaved: (value){
+                                              _motif=value ?? "";
+                                              print(value);
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                            flex: 2,
+                                            child: SizedBox()
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    ///BUTTON
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            flex: 1,
+                                            child: SizedBox()
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: CustomElevatedButton(
+                                            txt: "Confirmer",
+                                            txtStyle: appTextStyles.whiteSemiBold16,
+                                            btnColor: themeProvider.ateneoBlue,
+                                            btnWidth: double.maxFinite,
+                                            onPressed: () {
+                                              if(!formIsInvalid()){
+                                                print("patient: $_selectedPatient");
+                                                print("date: $_selectedDay");
+                                                print("time: $_selectedTime");
+                                                print("motif: $_motif");
+                                                print("Processing appointment booking...");
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                            flex: 1,
+                                            child: SizedBox()
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                                            ],
+                                                          ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: SizedBox(),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                     ),
                   ),
                 ),

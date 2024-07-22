@@ -32,8 +32,8 @@ class UserViewModel with ChangeNotifier {
         'args': [requestData],
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
-      print(result);
-      final jsonResponse = result;
+      print('callKw result '+ result.toString());
+      final jsonResponse = result['result'];
       final loginResponse = LoginResponse.fromJson(jsonResponse);
       return loginResponse;
     } on OdooException catch (e) {

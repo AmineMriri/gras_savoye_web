@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/models/doctor.dart';
 import 'package:healio/models/responses/doctor/details_doctor_reponse.dart';
 import 'package:healio/view_models/doctor_view_model.dart';
+import 'package:healio/views/responsive.dart';
 import 'package:healio/widgets/custom_card.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -38,7 +41,9 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
     super.initState();
     isDialOpen = ValueNotifier<bool>(false);
     doctorViewModel = Provider.of<DoctorViewModel>(context, listen: false);
+    print('before doctorfetshing');
     fetchDoctorDetails();
+    print('after doctor fetshing :');
   }
   @override
   Widget build(BuildContext context) {
@@ -51,7 +56,8 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
       bottom: true,
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: CustomAppBar(
+        appBar:
+        CustomAppBar(
           title: "",
           icon: IconButton(
             icon: Icon(
@@ -114,219 +120,704 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
             ),
           ),*/
         ),
-        body: RefreshIndicator(
-          onRefresh: refresh,
-          child: isLoading ? Center(
-            child: SpinKitCircle(
-                color: themeProvider.blue,
-                size: 50.0
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Positioned.fill(child: Image.asset('images/doctor_physician.png',fit: BoxFit.cover,)),
+            FittedBox(
+              fit: BoxFit.cover,
+              child: Image.asset('images/doctor-physician.jpg'),
             ),
-          ) : isError
-              ? ErrorDisplayAndRefresh(appTextStyles, themeProvider,
-                  () async {
-                setState(() {
-                  refresh();
-                });
-              })
-              : SingleChildScrollView(
-              child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ///HEADING
-                /*ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: Image.asset(
-                      'assets/images/blank_profile_pic.png',
-                      height: 200,
-                      width: 200,
-                    )
-                ),*/
-                Center(
-                  child: Column(
+            RefreshIndicator(
+              onRefresh: refresh,
+              child: isLoading ? Center(
+                child: SpinKitCircle(
+                    color: themeProvider.blue,
+                    size: 50.0
+                ),
+              ) : isError
+                  ? ErrorDisplayAndRefresh(appTextStyles, themeProvider,
+                      () async {
+                    setState(() {
+                      refresh();
+                    });
+                  })
+                  :
+                  ///////////////////////////////////////////////////////DESKTOP////////////////////////////////////////////////////////////////////////////////////////////////////////
+              Responsive.isDesktop(context)?
+              Row(
                     children: [
-                      ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: Image.asset(
-                            'assets/images/blank_profile_pic.png',
-                            height: 200,
-                            width: 200,
-                          )
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        name,
-                        style: appTextStyles.ateneoBlueBold20,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomAppBarButton(
-                      iconData: Icons.phone_rounded,
-                      themeProvider: themeProvider,
-                      onPressed: () async {
-                        final url=Uri.parse('tel:+216 $phone');
-                        if(await canLaunchUrl(url)){
-                        await launchUrl(url);
-                        }else{
-                        throw 'Failed to launch $url';
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    CustomAppBarButton(
-                      iconData: Icons.email_rounded,
-                      themeProvider: themeProvider,
-                      onPressed: () async {
-                        final url=Uri.parse('mailto:$email');
-                        if(await canLaunchUrl(url)){
-                        await launchUrl(url);
-                        }else{
-                        throw 'Failed to launch $url';
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    CustomAppBarButton(
-                      iconData: Icons.directions_rounded,
-                      themeProvider: themeProvider,
-                      onPressed: () async {
-                        const latitude = 36.831491;
-                        const longitude = 10.308273;
-                        final mapUrl = Uri.parse('https://maps.google.com/?q=$latitude,$longitude');
-
-                        if (await canLaunchUrl(mapUrl)) {
-                          await launchUrl(mapUrl);
-                        } else {
-                          throw 'Failed to launch $mapUrl';
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                CustomCard(
-                  appTextStyles,
-                  themeProvider,
-                  "Spécialité",
-                  Text(
-                    speciality,
-                    style: appTextStyles.graniteGreyRegular14,
-                  ),
-                  null,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomCard(
-                  appTextStyles,
-                  themeProvider,
-                  "Coordonnées",
-                  Column(
-                    children: [
-                      Row(
+                      Expanded(flex : 4, child: SizedBox()),
+                      Expanded(
+                        flex: 4,
+                        child: SingleChildScrollView(
+                        child: Container(
+                          // constraints:BoxConstraints(maxWidth: 870),
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.phone_rounded,
-                            color: themeProvider.graniteGrey,
+                          ///HEADING
+                          /*ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.asset(
+                                'assets/images/blank_profile_pic.png',
+                                height: 200,
+                                width: 200,
+                              )
+                          ),*/
+                          Center(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 20,),
+                                ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: Image.asset(
+                                      'assets/images/blank_profile_pic.png',
+                                      height: 200,
+                                      width: 200,
+                                    )
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  name,
+                                  style: appTextStyles.ateneoBlueBold20,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(
-                            width: 15,
+                            height: 60,
                           ),
-                          Text(
-                            "+216 $phone",
-                            style: appTextStyles.graniteGreyRegular14,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.email_rounded,
-                            color: themeProvider.graniteGrey,
+                          CustomCard(
+                            appTextStyles,
+                            themeProvider,
+                            "Spécialité",
+                            Center(
+                              child: Text(
+                                speciality,
+                                style: appTextStyles.graniteGreyRegular14,
+                              ),
+                            ),
+                            null,
                           ),
                           const SizedBox(
-                            width: 15,
+                            height: 20,
                           ),
-                          Text(
-                            email,
-                            style: appTextStyles.graniteGreyRegular14,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.location_on_rounded,
-                                color: themeProvider.graniteGrey,
+                              Expanded(
+                                flex: 4,
+                                child: Column(
+                                  children: [
+                                    CustomAppBarButton(
+                                      iconData: Icons.phone_rounded,
+                                      themeProvider: themeProvider,
+                                      onPressed: () async {
+                                        final url=Uri.parse('tel:+216 $phone');
+                                        if(await canLaunchUrl(url)){
+                                          await launchUrl(url);
+                                        }else{
+                                          throw 'Failed to launch $url';
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    CustomAppBarButton(
+                                      iconData: Icons.email_rounded,
+                                      themeProvider: themeProvider,
+                                      onPressed: () async {
+                                        final url=Uri.parse('mailto:$email');
+                                        if(await canLaunchUrl(url)){
+                                          await launchUrl(url);
+                                        }else{
+                                          throw 'Failed to launch $url';
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    CustomAppBarButton(
+                                      iconData: Icons.directions_rounded,
+                                      themeProvider: themeProvider,
+                                      onPressed: () async {
+                                        const latitude = 36.831491;
+                                        const longitude = 10.308273;
+                                        final mapUrl = Uri.parse('https://maps.google.com/?q=$latitude,$longitude');
+
+                                        if (await canLaunchUrl(mapUrl)) {
+                                          await launchUrl(mapUrl);
+                                        } else {
+                                          throw 'Failed to launch $mapUrl';
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              Text(
-                                address,
-                                style: appTextStyles.graniteGreyRegular14,
+                              Expanded(flex : 1, child: SizedBox()),
+                              Expanded(
+                                flex: 28,
+                                child: CustomCard(
+                                  appTextStyles,
+                                  themeProvider,
+                                  "Coordonnées",
+                                  Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.phone_rounded,
+                                            color: themeProvider.graniteGrey,
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                            "+216 $phone",
+                                            style: appTextStyles.graniteGreyRegular14,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.email_rounded,
+                                            color: themeProvider.graniteGrey,
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                            email,
+                                            style: appTextStyles.graniteGreyRegular14,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.location_on_rounded,
+                                                color: themeProvider.graniteGrey,
+                                              ),
+                                              const SizedBox(
+                                                width: 15,
+                                              ),
+                                              Text(
+                                                address,
+                                                style: appTextStyles.graniteGreyRegular14,
+                                              ),
+                                            ],
+                                          ),
+                                          Text(
+                                            "(5 Km)",
+                                            style: appTextStyles.graniteGreyRegular14,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  null,
+                                ),
                               ),
                             ],
                           ),
-                          Text(
-                            "(5 Km)",
-                            style: appTextStyles.graniteGreyRegular14,
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                  flex: 1,
+                                  child: SizedBox()),
+                              Expanded(
+                                flex: 2,
+                                child: CustomElevatedButton(
+                                    txt: "Planifier un RDV",
+                                    txtStyle: appTextStyles.whiteSemiBold16,
+                                    btnColor: themeProvider.ateneoBlue,
+                                    btnWidth: double.maxFinite,
+                                    onPressed: () {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddAptScreen(docId: widget.docId,)));
+                                    }),
+                              ),
+                              Expanded(
+                                  flex: 1,
+                                  child: SizedBox()),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
                           ),
                         ],
+                                        ),
+                                      )),
                       ),
+                      Expanded(flex : 1,child: SizedBox())
                     ],
+                  )
+              ///////////////////////////////////////////////////////TABLET////////////////////////////////////////////////////////////////////////////////////////////////////////
+                  :Responsive.isTablet(context)?
+              Row(
+                children: [
+                  Expanded(flex : 4, child: SizedBox()),
+                  Expanded(
+                    flex: 6,
+                    child: SingleChildScrollView(
+                        child: Container(
+                          // constraints:BoxConstraints(maxWidth: 870),
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ///HEADING
+                              /*ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.asset(
+                                'assets/images/blank_profile_pic.png',
+                                height: 200,
+                                width: 200,
+                              )
+                          ),*/
+                              Center(
+                                child: Column(
+                                  children: [
+                                    SizedBox(height: 20,),
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.circular(100),
+                                        child: Image.asset(
+                                          'assets/images/blank_profile_pic.png',
+                                          height: 200,
+                                          width: 200,
+                                        )
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    Text(
+                                      name,
+                                      style: appTextStyles.ateneoBlueBold20,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              CustomCard(
+                                appTextStyles,
+                                themeProvider,
+                                "Spécialité",
+                                Text(
+                                  speciality,
+                                  style: appTextStyles.graniteGreyRegular14,
+                                ),
+                                null,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+
+
+                              Row(
+                                children: [
+
+                                  Expanded(
+                                    flex: 4,
+                                    child: Column(
+                                      children: [
+                                      CustomAppBarButton(
+                                        iconData: Icons.phone_rounded,
+                                        themeProvider: themeProvider,
+                                        onPressed: () async {
+                                          final url=Uri.parse('tel:+216 $phone');
+                                          if(await canLaunchUrl(url)){
+                                            await launchUrl(url);
+                                          }else{
+                                            throw 'Failed to launch $url';
+                                          }
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      CustomAppBarButton(
+                                        iconData: Icons.email_rounded,
+                                        themeProvider: themeProvider,
+                                        onPressed: () async {
+                                          final url=Uri.parse('mailto:$email');
+                                          if(await canLaunchUrl(url)){
+                                            await launchUrl(url);
+                                          }else{
+                                            throw 'Failed to launch $url';
+                                          }
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      CustomAppBarButton(
+                                        iconData: Icons.directions_rounded,
+                                        themeProvider: themeProvider,
+                                        onPressed: () async {
+                                          const latitude = 36.831491;
+                                          const longitude = 10.308273;
+                                          final mapUrl = Uri.parse('https://maps.google.com/?q=$latitude,$longitude');
+
+                                          if (await canLaunchUrl(mapUrl)) {
+                                            await launchUrl(mapUrl);
+                                          } else {
+                                            throw 'Failed to launch $mapUrl';
+                                          }
+                                        },
+                                      ),
+                                    ],),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                      child: SizedBox()
+                                  ),
+                                  Expanded(
+                                    flex: 24,
+                                    child: CustomCard(
+                                      appTextStyles,
+                                      themeProvider,
+                                      "Coordonnées",
+                                      Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.phone_rounded,
+                                                color: themeProvider.graniteGrey,
+                                              ),
+                                              const SizedBox(
+                                                width: 15,
+                                              ),
+                                              Text(
+                                                "+216 $phone",
+                                                style: appTextStyles.graniteGreyRegular14,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.email_rounded,
+                                                color: themeProvider.graniteGrey,
+                                              ),
+                                              const SizedBox(
+                                                width: 15,
+                                              ),
+                                              Text(
+                                                email,
+                                                style: appTextStyles.graniteGreyRegular14,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.location_on_rounded,
+                                                    color: themeProvider.graniteGrey,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                  Text(
+                                                    address,
+                                                    style: appTextStyles.graniteGreyRegular14,
+                                                  ),
+                                                ],
+                                              ),
+                                              Text(
+                                                "(5 Km)",
+                                                style: appTextStyles.graniteGreyRegular14,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      null,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: SizedBox()),
+                                  Expanded(
+                                    flex: 2,
+                                    child: CustomElevatedButton(
+                                        txt: "Planifier un RDV",
+                                        txtStyle: appTextStyles.whiteSemiBold16,
+                                        btnColor: themeProvider.ateneoBlue,
+                                        btnWidth: double.maxFinite,
+                                        onPressed: () {
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddAptScreen(docId: widget.docId,)));
+                                        }),
+                                  ),
+                                  Expanded(
+                                      flex: 1,
+                                      child: SizedBox()),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          ),
+                        )),
                   ),
-                  null,
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomElevatedButton(
-                          txt: "Planifier un RDV",
-                          txtStyle: appTextStyles.whiteSemiBold16,
-                          btnColor: themeProvider.ateneoBlue,
-                          btnWidth: double.maxFinite,
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddAptScreen(docId: widget.docId,)));
-                          }),
+                  Expanded(
+                      flex: 1,
+                      child: SizedBox()),
+                ],
+              ):
+              ///////////////////////////////////////////////////////MOBILE////////////////////////////////////////////////////////////////////////////////////////////////////////
+              SingleChildScrollView(
+                  child: Container(
+                    // constraints:BoxConstraints(maxWidth: 870),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ///HEADING
+                        /*ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.asset(
+                                'assets/images/blank_profile_pic.png',
+                                height: 200,
+                                width: 200,
+                              )
+                          ),*/
+                        Center(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 20,),
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: Image.asset(
+                                    'assets/images/blank_profile_pic.png',
+                                    height: 200,
+                                    width: 200,
+                                  )
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                name,
+                                style: appTextStyles.ateneoBlueBold20,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomAppBarButton(
+                              iconData: Icons.phone_rounded,
+                              themeProvider: themeProvider,
+                              onPressed: () async {
+                                final url=Uri.parse('tel:+216 $phone');
+                                if(await canLaunchUrl(url)){
+                                  await launchUrl(url);
+                                }else{
+                                  throw 'Failed to launch $url';
+                                }
+                              },
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            CustomAppBarButton(
+                              iconData: Icons.email_rounded,
+                              themeProvider: themeProvider,
+                              onPressed: () async {
+                                final url=Uri.parse('mailto:$email');
+                                if(await canLaunchUrl(url)){
+                                  await launchUrl(url);
+                                }else{
+                                  throw 'Failed to launch $url';
+                                }
+                              },
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            CustomAppBarButton(
+                              iconData: Icons.directions_rounded,
+                              themeProvider: themeProvider,
+                              onPressed: () async {
+                                const latitude = 36.831491;
+                                const longitude = 10.308273;
+                                final mapUrl = Uri.parse('https://maps.google.com/?q=$latitude,$longitude');
+
+                                if (await canLaunchUrl(mapUrl)) {
+                                  await launchUrl(mapUrl);
+                                } else {
+                                  throw 'Failed to launch $mapUrl';
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        CustomCard(
+                          appTextStyles,
+                          themeProvider,
+                          "Spécialité",
+                          Text(
+                            speciality,
+                            style: appTextStyles.graniteGreyRegular14,
+                          ),
+                          null,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        CustomCard(
+                          appTextStyles,
+                          themeProvider,
+                          "Coordonnées",
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.phone_rounded,
+                                    color: themeProvider.graniteGrey,
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  Text(
+                                    "+216 $phone",
+                                    style: appTextStyles.graniteGreyRegular14,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.email_rounded,
+                                    color: themeProvider.graniteGrey,
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  Text(
+                                    email,
+                                    style: appTextStyles.graniteGreyRegular14,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_on_rounded,
+                                        color: themeProvider.graniteGrey,
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Text(
+                                        address,
+                                        style: appTextStyles.graniteGreyRegular14,
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    "(5 Km)",
+                                    style: appTextStyles.graniteGreyRegular14,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          null,
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: SizedBox()),
+                            Expanded(
+                              flex: 2,
+                              child: CustomElevatedButton(
+                                  txt: "Planifier un RDV",
+                                  txtStyle: appTextStyles.whiteSemiBold16,
+                                  btnColor: themeProvider.ateneoBlue,
+                                  btnWidth: double.maxFinite,
+                                  onPressed: () {
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddAptScreen(docId: widget.docId,)));
+                                  }),
+                            ),
+                            Expanded(
+                                flex: 1,
+                                child: SizedBox()),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-              ],
+                  )),
             ),
-          )),
+          ],
         ),
       ),
     );

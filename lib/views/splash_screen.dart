@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:healio/views/auth/biometrics_screen.dart';
+import 'package:healio/views/bulletins/bulletins_screen.dart';
+import 'package:healio/views/doctors/doctors_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../helper/providers/theme_provider.dart';
 import '../widgets/nav_bottom_bar.dart';
+import 'appointments/add_apt_screen.dart';
 import 'auth/sign_in_screen.dart';
+import 'doctors/doc_profile_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -47,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigate() async {
     bool isLoggedIn = await isUserLoggedIn();
-     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? NavigationBottom() : SignInScreen()));
-    //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? const BiometricsScreen() : const SignInScreen()));
+     // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? NavigationBottom() : SignInScreen()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DoctorsScreen()));
   }
 }

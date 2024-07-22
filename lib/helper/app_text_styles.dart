@@ -59,6 +59,13 @@ class AppTextStyles {
       fontSize: 16,
     );
   }
+  TextStyle get onyxBold18 {
+    final themeProvider = context.themeProvider;
+    return _baseBoldTextStyle.copyWith(
+      color: themeProvider.onyx,
+      fontSize: 18,
+    );
+  }
   TextStyle get ateneoBlueBold24 {
     final themeProvider = context.themeProvider;
     return _baseBoldTextStyle.copyWith(

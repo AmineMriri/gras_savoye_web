@@ -576,7 +576,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
           ),
           icon: null,
         ),
-        body: /*isLoading
+        body: isLoading
             ? SpinKitCircle(color: themeProvider.blue.withOpacity(0.6), size: 50.0)
             : isError
             ? ErrorDisplayAndRefresh(appTextStyles, themeProvider, () async {
@@ -586,7 +586,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
           });
           await fetchBSForSelectedTab(_tabController.index);
         })
-            : */
+            :
         BulletinList(
           bsList: bsList,
           onRefresh: () async {

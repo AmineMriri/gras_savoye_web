@@ -333,6 +333,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.6"
+  get_it:
+    dependency: "direct main"
+    description:
+      name: get_it
+      sha256: d85128a5dae4ea777324730dc65edd9c9f43155c109d5cc0a69cab74139fbac1
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.7.0"
   http:
     dependency: transitive
     description:
@@ -1018,6 +1026,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
+  xml_rpc:
+    dependency: "direct main"
+    description:
+      name: xml_rpc
+      sha256: "656c2afa061966c9a331ed4d48eeb3ed5ef9fb8a6a2ac07b13edf2eb7d598642"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0"
 sdks:
   dart: ">=3.3.4 <4.0.0"
   flutter: ">=3.19.0"

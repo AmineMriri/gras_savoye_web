@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
 import 'package:healio/views/bulletins/expandable_bs_item.dart';
 import 'package:healio/views/responsive.dart';
@@ -55,7 +57,7 @@ class _BulletinListState extends State<BulletinList> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    CustomSearchWidgets(
+                    Responsive.isMobile(context)?CustomSearchWidgets(
                       onChanged: (query) {
                         _filterBsList(query);
                       },
@@ -101,6 +103,51 @@ class _BulletinListState extends State<BulletinList> {
                           ),
                         ],
                       ),
+                    )
+                        :Row(
+                      children: [
+                        Expanded(
+                          flex: 26,
+                          child: CustomSearchWidgets(
+                            onChanged: (query) {
+                              _filterBsList(query);
+                            },
+                            searchHint: "Recherche par N° de bulletin",
+                            onPressedFilter: (){},
+                            body: null,
+                          ),
+                        ),
+                        Expanded(flex : 1 , child: SizedBox()),
+                        Expanded(flex : 16, child: CustomDropdown(
+                          hint: 'Bénéficiaire',
+                          items: const ['Mohamed', 'Nour', 'Yassine'],
+                          selectedValue: selectedStateValue,
+                          themeProvider: themeProvider,
+                          onChanged: null,
+                        ),),
+                        Expanded(flex : 1 , child: SizedBox()),
+                        Expanded(
+                          flex: 16,
+                            child: CustomDatePicker(
+                              themeProvider: themeProvider,
+                              appTextStyles: appTextStyles,
+                              title: "Date min",
+                              onValueChanged: (selectedValue) {
+                                print('Selected min value: $selectedValue');
+                              },
+                            )),
+                        Expanded(flex : 1 , child: SizedBox()),
+                        Expanded(
+                          flex: 16,
+                            child: CustomDatePicker(
+                              themeProvider: themeProvider,
+                              appTextStyles: appTextStyles,
+                              title: "Date max",
+                              onValueChanged: (selectedValue) {
+                                print('Selected max value: $selectedValue');
+                              },
+                            )),
+                      ],
                     ),
                     const SizedBox(
                       height: 10,

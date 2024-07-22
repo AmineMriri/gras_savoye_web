@@ -35,8 +35,8 @@ class _MyDrawerState extends State<MyDrawer> {
     MenuModel(icon: 'assets/svg/doctor-svg.svg', title: "Doctors"),
     MenuModel(icon: 'assets/svg/calendar-svg.svg', title: "Mes RDVs"),
     MenuModel(icon: 'assets/svg/notification-svg.svg', title: "Notifications"),
-    MenuModel(icon: 'assets/svg/profile-svg.svg', title: "Configurations"),
-    MenuModel(icon: 'assets/svg/signout.svg', title: "Déconnexion"),
+    MenuModel(icon: 'assets/svg/profile-svg.svg', title: "Profile"),
+    // MenuModel(icon: 'assets/svg/signout.svg', title: "Déconnexion"),
 
   ];
 
@@ -74,7 +74,7 @@ Widget build (BuildContext context){
                 SizedBox(
                   height: Responsive.isMobile(context) ? 40 : 80,
                 ),
-                for (var i = 0; i < menu.length; i++)
+                for (var i = 0; i < (Responsive.isDesktop(context)?menu.length-1:menu.length); i++)
                   Container(
                     width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.only(top: 10, bottom: 10),
