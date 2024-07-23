@@ -66,9 +66,24 @@ dependencies:
   number_paginator: ^0.4.1
   path_provider:
   permission_handler:
-  open_file: ^3.3.2
   open_file_plus: ^3.4.1+1
   xml_rpc: ^0.5.0
+
+
+  device_info_plus: ^10.1.0
+  http: ^1.2.1
+  intl: ^0.18.1
+  firebase_core: ^2.31.0
+  firebase_messaging: ^14.9.2
+  carousel_slider: ^4.2.1
+  socket_io_client: ^2.0.3+1
+  flutter_tts:
+  speech_to_text:
+  safe_device: ^1.1.7
+  flutter_local_notifications: ^17.2.1
+  googleapis: ^13.1.0
+  googleapis_auth: ^1.6.0
+  aws_sdk: ^0.0.3
 
 dev_dependencies:
   flutter_test:

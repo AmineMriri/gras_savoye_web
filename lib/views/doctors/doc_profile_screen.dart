@@ -41,9 +41,7 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
     super.initState();
     isDialOpen = ValueNotifier<bool>(false);
     doctorViewModel = Provider.of<DoctorViewModel>(context, listen: false);
-    print('before doctorfetshing');
     fetchDoctorDetails();
-    print('after doctor fetshing :');
   }
   @override
   Widget build(BuildContext context) {
@@ -55,7 +53,6 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
       right: false,
       bottom: true,
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar:
         CustomAppBar(
           title: "",
@@ -121,13 +118,20 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
           ),*/
         ),
         body: Stack(
-          fit: StackFit.expand,
+          // fit: StackFit.expand,
           children: [
             // Positioned.fill(child: Image.asset('images/doctor_physician.png',fit: BoxFit.cover,)),
-            FittedBox(
-              fit: BoxFit.cover,
-              child: Image.asset('images/doctor-physician.jpg'),
+            Opacity(
+              opacity: 0.7,
+              child: Image.asset(
+                  'assets/images/doctor-physician.jpg',
+                fit : BoxFit.fill ,
+                width: double.infinity,
+                height: double.infinity,
+              ),
             ),
+
+
             RefreshIndicator(
               onRefresh: refresh,
               child: isLoading ? Center(
@@ -272,9 +276,17 @@ class _DocProfileScreenState extends State<DocProfileScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          Icon(
-                                            Icons.phone_rounded,
-                                            color: themeProvider.graniteGrey,
+                                          CustomAppBarButton(
+                                            iconData: Icons.phone_rounded,
+                                            themeProvider: themeProvider,
+                                            onPressed: () async {
+                                              final url=Uri.parse('tel:+216 $phone');
+                                              if(await canLaunchUrl(url)){
+                                                await launchUrl(url);
+                                              }else{
+                                                throw 'Failed to launch $url';
+                                              }
+                                            },
                                           ),
                                           const SizedBox(
                                             width: 15,

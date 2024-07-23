@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:healio/views/auth/biometrics_screen.dart';
-import 'package:healio/views/bulletins/bulletins_screen.dart';
 import 'package:healio/views/doctors/doctors_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigate() async {
     bool isLoggedIn = await isUserLoggedIn();
-     // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? NavigationBottom() : SignInScreen()));
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DoctorsScreen()));
+     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => isLoggedIn ? NavigationBottom() : SignInScreen()));
+    // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DocProfileScreen(docId: 1,)));
   }
 }

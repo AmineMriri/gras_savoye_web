@@ -1,8 +1,10 @@
 import 'package:healio/models/family_member.dart';
 
 class GetProfileResponse {
-  final int res_code;
+  final int resCode;
   final String? name;
+  final String? image;
+
   final String? matricule;
   final String? etablissement;
   final String? assurance;
@@ -13,8 +15,10 @@ class GetProfileResponse {
   final List<FamilyMember>? parent;
 
   GetProfileResponse({
-    required this.res_code,
+    required this.resCode,
     this.name,
+    this.image,
+
     this.matricule,
     this.etablissement,
     this.assurance,
@@ -37,8 +41,10 @@ class GetProfileResponse {
     }
 
     return GetProfileResponse(
-      res_code: int.parse(json['res_code'].toString()),
+      resCode: json['res_code'] == false ? -1 : int.tryParse(json['res_code'].toString().trim()) ?? -1,
       name: json['name'].toString(),
+      image: json['image'] == false ? null : json['image'],
+
       matricule: json['matricule'].toString(),
       etablissement: json['etablissement'].toString(),
       assurance: json['assurance'].toString(),

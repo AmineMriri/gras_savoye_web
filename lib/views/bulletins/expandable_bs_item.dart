@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:healio/helper/extensions/string_extensions.dart';
 import 'package:permission_handler/permission_handler.dart';import 'package:healio/helper/providers/theme_provider.dart';
@@ -9,6 +10,7 @@ import 'package:open_file_plus/open_file_plus.dart';
 import 'package:provider/provider.dart';
 import '../../helper/app_text_styles.dart';
 import '../../helper/date_utils.dart';
+import '../../helper/service_locator.dart';
 import '../../models/prestation.dart';
 import '../../view_models/bulletin_view_model.dart';
 import '../../widgets/custom_percent.dart';
@@ -25,6 +27,8 @@ class ExpandableBulletinItem extends StatefulWidget {
 class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
   bool _isExpanded = false;
   late BulletinViewModel bulletinViewModel;
+  bool _isDownloading = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -143,14 +147,23 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
 
   void fetchAndSaveDocument(BuildContext context, int bsId, String bsNum, String type) async {
     try {
-      File file = await bulletinViewModel.getBsDocument(bsId, bsNum, type);
+
+      setState(() {
+        _isDownloading = true; // Set downloading to true when starting download
+      });
+
+
+      File file = await bulletinViewModel.getBsDocument(bsId, bsNum, type, getSelectedValue()!);
       String filepath=file.path;
       OpenFile.open(filepath);
       print('Document path at: $filepath');
 
     } catch (e) {
-      print('Error fetching or saving document: $e');
-    }
+      setState(() {
+        _isDownloading = false; // Reset downloading status if permission is not granted
+      });
+      showPermissionSnackbar(context, "Impossible de télécharger le fichier.");
+      print('Error fetching or saving document: $e');    }
   }
   /*
   * Future<void> requestPermission(void Function() fetchAndSaveDocument) async {
@@ -173,6 +186,15 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
       fetchAndSaveDocument(); // Already granted, directly call the function
     }
   }*/
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showPermissionSnackbar(BuildContext context, String content) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(content),
+        duration: const Duration(milliseconds: 3000),
+      ),
+    );
+  }
   Future<void> requestPermission(void fetchAndSaveDocument) async {
     const permission = Permission.storage;
 
@@ -384,4 +406,15 @@ class _ExpandableBulletinItemState extends State<ExpandableBulletinItem> {
   }
 
 
+  String? getSelectedValue()  {
+
+    if(Responsive.isMobile(context) && !kIsWeb)
+    {
+      final selectedValueService = locator<SelectedDbValueService>();
+      return selectedValueService.selectedValue;
+    }else{
+      final SelectedDbValueService = "backoffice_Gras_2";
+      return SelectedDbValueService;
+    }
+  }
 }

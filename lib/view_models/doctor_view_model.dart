@@ -32,8 +32,10 @@ class DoctorViewModel with ChangeNotifier {
 
 
       final doctorResponse = ListDoctorsResponse.fromJson(result['result']);
+      // final doctorResponse = ListDoctorsResponse.fromJson(result);
 
-      print('this is the get doctors result :'+result['result']);
+
+      print('this is the get doctors result :'+result);
       return doctorResponse;
     } catch (e) {
       print("Error fetching doctors: $e");

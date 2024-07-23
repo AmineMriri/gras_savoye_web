@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/date_utils.dart';
@@ -6,11 +7,13 @@ import 'package:healio/models/prestation.dart';
 import 'package:healio/widgets/custom_percent.dart';
 import 'package:provider/provider.dart';
 import '../../helper/app_text_styles.dart';
+import '../../helper/service_locator.dart';
 import '../../models/responses/bulletin/details_bulletin_reponse.dart';
 import '../../view_models/bulletin_view_model.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/error_display_and_refresh.dart';
+import '../responsive.dart';
 
 class BulletinDetailsScreen extends StatefulWidget {
   final int idBs;
@@ -277,8 +280,8 @@ class _BulletinDetailsScreenState extends State<BulletinDetailsScreen> {
 
   Future<void> fetchBSDetails() async {
     try {
-      DetailsBulletinResponse detailsBulletinResponse=await bulletinViewModel.getBulletinDetails(widget.idBs);
-      switch (detailsBulletinResponse.res_code) {
+      DetailsBulletinResponse detailsBulletinResponse=await bulletinViewModel.getBulletinDetails(widget.idBs,getDbSelectedValue()!);
+      switch (detailsBulletinResponse.resCode) {
         case 1:
         // retrieve bs details
           prestationsList=detailsBulletinResponse.prestations;
@@ -320,4 +323,15 @@ class _BulletinDetailsScreenState extends State<BulletinDetailsScreen> {
   bool isInProgress(String state){
     return state.toLowerCase()=="en cours";
   }
+  String? getDbSelectedValue() {
+    if(Responsive.isMobile(context) && !kIsWeb)
+    {
+      final selectedValueService = locator<SelectedDbValueService>();
+      return selectedValueService.selectedValue;
+    }else{
+      final SelectedDbValueService = "backoffice_Gras_2";
+      return SelectedDbValueService;
+    }
+  }
+
 }

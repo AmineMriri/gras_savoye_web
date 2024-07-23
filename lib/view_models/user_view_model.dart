@@ -1,4 +1,7 @@
 import 'dart:async';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:healio/models/responses/user/family_members_response.dart';
 import 'package:healio/models/responses/user/get_profile_response.dart';
 import 'package:healio/models/responses/user/login_response.dart';
 import 'package:healio/models/responses/user/forgot_pwd_response.dart';
@@ -10,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helper/config.dart';
 import '../helper/providers/tab_provider.dart';
+import '../models/responses/user/family_members_response.dart';
 import '../views/auth/sign_in_screen.dart';
 
 class UserViewModel with ChangeNotifier {
@@ -17,7 +21,7 @@ class UserViewModel with ChangeNotifier {
   OdooClient client = OdooClient(AppConfig.serverUrl);
   String dbName='backoffice_Gras_2';
 
-  Future<LoginResponse> signIn(String login, String password) async {
+  Future<LoginResponse> signIn(String login, String password, String dbName) async {
     try {
       await client.authenticate(
           dbName, AppConfig.dbUsername, AppConfig.dbPassword);
@@ -31,7 +35,7 @@ class UserViewModel with ChangeNotifier {
         'method': 'get_user_account',
         'args': [requestData],
         'kwargs': {},
-      }).timeout(const Duration(seconds: 20));
+      }).timeout(const Duration(seconds: 60));
       print('callKw result '+ result.toString());
       final jsonResponse = result['result'];
       final loginResponse = LoginResponse.fromJson(jsonResponse);
@@ -46,7 +50,7 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
-  Future<ForgotPwdResponse> forgotPwd(String login) async {
+  Future<ForgotPwdResponse> forgotPwd(String login, String dbName) async {
     try {
       await client.authenticate(
           dbName, AppConfig.dbUsername, AppConfig.dbPassword);
@@ -74,7 +78,7 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
-  Future<GetProfileResponse> getProfile(int userId) async {
+  Future<GetProfileResponse> getProfile(int userId, String dbName) async {
     try {
       await client.authenticate(
           dbName, AppConfig.dbUsername, AppConfig.dbPassword);
@@ -88,16 +92,41 @@ class UserViewModel with ChangeNotifier {
         'kwargs': {},
       }).timeout(const Duration(seconds: 20));
 
-      final jsonResponse = result;
+      final jsonResponse = result["result"];
       final getProfileResponse = GetProfileResponse.fromJson(jsonResponse);
 
       return getProfileResponse;
-    }  on OdooException catch (e) {
+    }  catch (e) {
       print("error $e");
       //client.close();
-      return GetProfileResponse(res_code: -1);
+      return GetProfileResponse(resCode: -1);
     }
   }
+
+  Future<FamilyMembersResponse> getFamilyMembers(int userId, String dbName) async {
+    try {
+      await client.authenticate(
+          dbName, AppConfig.dbUsername, AppConfig.dbPassword).timeout(const Duration(seconds: 30));
+      final requestData = {
+        'adherent_id': userId,
+      };
+      final result = await client.callKw({
+        'model': 'res.users',
+        'method': 'get_family_members',
+        'args': [requestData],
+        'kwargs': {},
+      }).timeout(const Duration(seconds: 60));
+      final jsonResponse = result["result"];
+      final familyMembersResponse = FamilyMembersResponse.fromJson(jsonResponse);
+
+      return familyMembersResponse;
+    }  catch (e) {
+      print("error $e");
+      //client.close();
+      return FamilyMembersResponse(resCode: -1);
+    }
+  }
+
 
   String encrypt(String pwd) {
     const base64Key = 'qkdHk49RaQxsWEEkCn/g9MYurnYvK5msGQCVHMaYqJE=';
@@ -120,6 +149,9 @@ class UserViewModel with ChangeNotifier {
     );
     final tabProvider = Provider.of<TabProvider>(context, listen: false);
     tabProvider.setTab(0);
+
+    FirebaseMessaging.instance.unsubscribeFromTopic("1");
+
   }
 
 

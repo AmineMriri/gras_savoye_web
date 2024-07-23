@@ -187,7 +187,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
       _isLoading = true;
     });
     try {
-      ForgotPwdResponse forgotPwdResponse=await userViewModel.forgotPwd(email);
+      ForgotPwdResponse forgotPwdResponse=await userViewModel.forgotPwd(email,'backoffice_Gras_2');
       switch (forgotPwdResponse.res_code) {
         case 1:
           Fluttertoast.showToast(

@@ -25,6 +25,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import '../../widgets/empty_list_refresh.dart';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+
 
 
 class DoctorsScreen extends StatefulWidget {
@@ -84,7 +87,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   int _currentPage = 1;
   int _totalPages = 1;
   int _totalCount = 0;
-  final int _limitPerPage = 30;
+  final int _limitPerPage = 5;
   late String? selectedDbValue;
   bool isFiltered=false;
   GlobalKey paginatorKey = GlobalKey();
@@ -93,6 +96,9 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   @override
   void initState() {
     super.initState();
+    doctorViewModel = Provider.of<DoctorViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    fetchDoctors(1,_limitPerPage);
 
   }
 
@@ -109,15 +115,14 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
       });
 
       final listDoctorsResponse =
-       await doctorViewModel.getDoctors(page, pageSize,'backoffice_Gras_2');
-
-      // await doctorViewModel.getDoctors(page, pageSize, selectedDbValue!);
+       // await doctorViewModel.getDoctors(page, pageSize,'backoffice_Gras_2');
+      await doctorViewModel.getDoctors(page, pageSize, selectedDbValue!);
       if (listDoctorsResponse.resCode == 1) {
           doctorsList = listDoctorsResponse.doctors;
-
-        setState(() {
           _totalPages = listDoctorsResponse.totalPages ?? 0;
           _totalCount = listDoctorsResponse.totalCount ?? 0;
+
+        setState(() {
           isLoading = false;
           isError = false;
         });
@@ -138,7 +143,8 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
 
   Future<String?> getSelectedValue() async {
 
-    if(Responsive.isMobile(context))
+
+    if(Responsive.isMobile(context) && !kIsWeb)
       {
         final selectedValueService = locator<SelectedDbValueService>();
 
@@ -280,9 +286,6 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    doctorViewModel = Provider.of<DoctorViewModel>(context, listen: false);
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    fetchDoctors(1,_limitPerPage);
     themeProvider = context.themeProvider;
     appTextStyles = AppTextStyles(context);
     return SafeArea(
@@ -436,7 +439,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                           visible: isFiltered,
                           child: InkWell(
                             onTap: (){
-                              refresh();
+                              // refresh();
                             },
                             child: Text(
                               "Réinitialiser",
@@ -467,7 +470,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                 child: Stack(
                   children: [
                     RefreshIndicator(
-                      onRefresh: refresh,
+                      onRefresh:  refresh,
                       child: doctorsList.isEmpty
                           ? SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
@@ -11,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/app_text_styles.dart';
 import '../../helper/date_utils.dart';
 import '../../helper/providers/tab_provider.dart';
+import '../../helper/service_locator.dart';
+import '../../models/responses/user/family_members_response.dart';
 import '../../models/responses/user/get_profile_response.dart';
 import '../../view_models/user_view_model.dart';
 import '../../widgets/custom_app_bar.dart';
@@ -321,54 +324,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await fetchProfile();
   }
 
+//   Future<void> fetchProfile() async {
+//     try {
+//       // GetProfileResponse getProfileResponse=await userViewModel.getProfile(int.parse(userId!));
+//       // print(getProfileResponse.res_code);
+//       // print(getProfileResponse.matricule);
+//       // print(getProfileResponse.name);
+//       // print(getProfileResponse.etablissement);
+//       // print(getProfileResponse.assurance);
+//       // print(getProfileResponse.birthdate);
+//       // print(getProfileResponse.login);
+//       // print(getProfileResponse.conjoint);
+//       // print(getProfileResponse.enfants);
+//       // print(getProfileResponse.parent);
+// /*
+// I/flutter (28878): 1
+// matricule1101
+// I/flutter (28878): MOHAMED SAHRAOUI
+// I/flutter (28878): BENETTON INDUSTRIELLE TUNISIE SARL
+// I/flutter (28878): BH ASSURANCES
+// I/flutter (28878): 1973-01-15
+// I/flutter (28878): meriambenida@gmail.com
+// I/flutter (28878): Family member: {name: SONIA ELJEBRI SAHRAOUI, birthdate: 1978-07-10}
+// I/flutter (28878): [Family member: {name: MARIEM SAHRAOUI, birthdate: 2006-06-17}, Family member: {name: MARAM SAHRAOUI, birthdate: 2006-06-17}, Family member: {name: NERMINE SAHRAOUI, birthdate: 2008-12-03}, Family member: {name: SIRINE SAHRAOUI, birthdate: 2014-12-24}, Family member: {name: TAHA SAHRAOUI, birthdate: 2016-07-15}]
+// I/flutter (28878): []
+// * */
+//       GetProfileResponse getProfileResponse = GetProfileResponse(
+//         res_code: 1,
+//         matricule: "1101",
+//         name: "MOHAMED SAHRAOUI",
+//         etablissement: "BENETTON INDUSTRIELLE TUNISIE SARL",
+//         assurance: "BH ASSURANCES",
+//         birthdate: "1973-01-15",
+//         login: "meriambenida@gmail.com",
+//         conjoint: FamilyMember(
+//             name: "SONIA ELJEBRI SAHRAOUI",
+//             birthdate: "1978-07-10"
+//         ),
+//         enfants: [
+//           FamilyMember(name: "Mariem SAHRAOUI", birthdate: "2006-06-17"),
+//           FamilyMember(name: "MARAM SAHRAOUI", birthdate: "2006-06-17"),
+//           FamilyMember(name: "NERMINE SAHRAOUI", birthdate: "2008-12-03"),
+//           FamilyMember(name: "SIRINE SAHRAOUI", birthdate: "2014-12-24"),
+//           FamilyMember(name: "TAHA SAHRAOUI", birthdate: "2016-07-15"),
+//
+//         ],
+//         parent: [],
+//       );
+//       switch (getProfileResponse.res_code) {
+//         case 1:
+//           profileData=getProfileResponse;
+//           // retrieve profile
+//           print("success profile");
+//           setState(() {
+//             isLoading=false;
+//             isError=false;
+//           });
+//           break;
+//         case -1:
+//           print("bad request profile");
+//           setState(() {
+//             isError=true;
+//             isLoading=false;
+//           });
+//           break;
+//         default:
+//           print("Internal server error profile");
+//           setState(() {
+//             isError=true;
+//             isLoading=false;
+//           });
+//       }
+//     } catch (error) {
+//       print("Error: $error");
+//       print("fetch profile");
+//
+//       setState(() {
+//         isError = true;
+//         isLoading = false;
+//       });
+//     }
+//   }
+
+  String? getSelectedValue()  {
+
+    if(Responsive.isMobile(context) && !kIsWeb)
+    {
+      final selectedValueService = locator<SelectedDbValueService>();
+      return selectedValueService.selectedValue;
+    }else{
+      final SelectedDbValueService = "backoffice_Gras_2";
+      return SelectedDbValueService;
+    }
+  }
+
   Future<void> fetchProfile() async {
     try {
-      // GetProfileResponse getProfileResponse=await userViewModel.getProfile(int.parse(userId!));
-      // print(getProfileResponse.res_code);
-      // print(getProfileResponse.matricule);
-      // print(getProfileResponse.name);
-      // print(getProfileResponse.etablissement);
-      // print(getProfileResponse.assurance);
-      // print(getProfileResponse.birthdate);
-      // print(getProfileResponse.login);
-      // print(getProfileResponse.conjoint);
-      // print(getProfileResponse.enfants);
-      // print(getProfileResponse.parent);
-/*
-I/flutter (28878): 1
-matricule1101
-I/flutter (28878): MOHAMED SAHRAOUI
-I/flutter (28878): BENETTON INDUSTRIELLE TUNISIE SARL
-I/flutter (28878): BH ASSURANCES
-I/flutter (28878): 1973-01-15
-I/flutter (28878): meriambenida@gmail.com
-I/flutter (28878): Family member: {name: SONIA ELJEBRI SAHRAOUI, birthdate: 1978-07-10}
-I/flutter (28878): [Family member: {name: MARIEM SAHRAOUI, birthdate: 2006-06-17}, Family member: {name: MARAM SAHRAOUI, birthdate: 2006-06-17}, Family member: {name: NERMINE SAHRAOUI, birthdate: 2008-12-03}, Family member: {name: SIRINE SAHRAOUI, birthdate: 2014-12-24}, Family member: {name: TAHA SAHRAOUI, birthdate: 2016-07-15}]
-I/flutter (28878): []
-* */
-      GetProfileResponse getProfileResponse = GetProfileResponse(
-        res_code: 1,
-        matricule: "1101",
-        name: "MOHAMED SAHRAOUI",
-        etablissement: "BENETTON INDUSTRIELLE TUNISIE SARL",
-        assurance: "BH ASSURANCES",
-        birthdate: "1973-01-15",
-        login: "meriambenida@gmail.com",
-        conjoint: FamilyMember(
-            name: "SONIA ELJEBRI SAHRAOUI",
-            birthdate: "1978-07-10"
-        ),
-        enfants: [
-          FamilyMember(name: "Mariem SAHRAOUI", birthdate: "2006-06-17"),
-          FamilyMember(name: "MARAM SAHRAOUI", birthdate: "2006-06-17"),
-          FamilyMember(name: "NERMINE SAHRAOUI", birthdate: "2008-12-03"),
-          FamilyMember(name: "SIRINE SAHRAOUI", birthdate: "2014-12-24"),
-          FamilyMember(name: "TAHA SAHRAOUI", birthdate: "2016-07-15"),
-
-        ],
-        parent: [],
-      );
-      switch (getProfileResponse.res_code) {
+      GetProfileResponse getProfileResponse=await userViewModel.getProfile(int.parse(userId!), getSelectedValue()!);
+      FamilyMembersResponse familyMembersResponse=await userViewModel.getFamilyMembers(int.parse(userId!), getSelectedValue()!);
+      switch (getProfileResponse.resCode) {
         case 1:
           profileData=getProfileResponse;
           // retrieve profile

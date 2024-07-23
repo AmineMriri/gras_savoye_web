@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:healio/helper/providers/theme_provider.dart';
@@ -13,6 +14,8 @@ import 'package:healio/widgets/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/app_text_styles.dart';
+import '../../helper/service_locator.dart';
+import '../../models/responses/user/family_members_response.dart';
 import '../../models/responses/user/login_response.dart';
 import '../../widgets/custom_appbar_button.dart';
 import '../../widgets/error_display_and_refresh.dart';
@@ -29,33 +32,50 @@ class BulletinsScreen extends StatefulWidget {
 
 class _BulletinsScreenState extends State<BulletinsScreen>
     with TickerProviderStateMixin {
+
   late TabController _tabController;
   String? userId;
-  List<Widget> tabs = [];
+
+
+  // List<Widget> tabs = [];
   late BulletinViewModel bulletinViewModel;
   late UserViewModel userViewModel;
   List<Bulletin> bsList = [];
   late AppTextStyles appTextStyles;
   bool isLoading = true;
   bool isError = false;
+//////////////////////////////////
+  Map<int, String> listBenef = {};
+  bool isLoadingFamily = true;
+  bool isErrorFamily = false;
+  late String? selectedDbValue;
+  int countBsOngoing = 0;
+  int countBsHandled = 0;
+  int countBsTotal = 0;
 
   @override
   void initState() {
     super.initState();
     bulletinViewModel = Provider.of<BulletinViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
-     tabs = getTabs();
+    //////////////////////////////////
+    // tabs = getTabs();
     _tabController = TabController(length: 3, vsync: this);
-     _initializeUserData();
+    _initializeUserData();
   }
 
   Future<void> _initializeUserData() async {
-    Map<String, dynamic>? userData;
-    if (widget.loginResponse != null) {
-      userData = getUserDataFromPreviousScreen();
-    } else {
-      userData = await getUserDataFromSharedPref();
-    }
+
+   ///////////////////////
+    // Map<String, dynamic>? userData;
+    // if (widget.loginResponse != null) {
+    //   userData = getUserDataFromPreviousScreen();
+    // } else {
+    //   userData = await getUserDataFromSharedPref();
+    // }
+    selectedDbValue = await getSelectedValue();
+    Map<String, dynamic>? userData = await getUserDataFromSharedPref();
+
 
     if (userData != null && userData['id'] != null) {
       userId = userData['id'];
@@ -63,27 +83,8 @@ class _BulletinsScreenState extends State<BulletinsScreen>
       // Fetch data for the first tab initially
       await fetchBSForSelectedTab(0);
     }
-// =======
-    // if (widget.loginResponse != null) {
-    //   userData = getUserDataFromPreviousScreen();
-    // } else {
-    //   userData = await getUserDataFromSharedPref();
-    // }
-    // if (userData != null) {
-    //   if (userData['id'] != null) {
-    //     userId = userData['id'];
-    //     fetchBS();
-    //   }
-    //   if (userData['name'] != null) {
-    //     name = userData['name'];
-    //   }
-    //   setupTabContoller();
-    // }
-    // fetchBS();
-    // setupTabContoller();
-// >>>>>>> web
   }
-
+///////////////////////
   Map<String, dynamic>? getUserDataFromPreviousScreen() {
     String? id = widget.loginResponse!.id;
     String? name = widget.loginResponse!.name;
@@ -99,22 +100,29 @@ class _BulletinsScreenState extends State<BulletinsScreen>
     return userData.isNotEmpty ? userData : null;
   }
 
+
   Future<Map<String, dynamic>?> getUserDataFromSharedPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
     String? name = prefs.getString('name');
-
-    Map<String, dynamic> userData = {};
-
-    if (id != null) {
-      userData['id'] = id;
+//////////////////
+  //   Map<String, dynamic> userData = {};
+  //
+  //   if (id != null) {
+  //     userData['id'] = id;
+  //   }
+  //
+  //   if (name != null) {
+  //     userData['name'] = name;
+  //   }
+  //
+  //   return userData.isNotEmpty ? userData : null;
+  // }
+    if (id == null && name == null) {
+      return null;
     }
 
-    if (name != null) {
-      userData['name'] = name;
-    }
-
-    return userData.isNotEmpty ? userData : null;
+    return {'id': id, 'name': name};
   }
 
   void setupTabController() {
@@ -123,6 +131,9 @@ class _BulletinsScreenState extends State<BulletinsScreen>
         setState(() {
           isLoading = true;
           isError = false;
+          isLoadingFamily = true;
+
+          isErrorFamily = false;
         });
         fetchBSForSelectedTab(_tabController.index);
       }
@@ -138,349 +149,57 @@ class _BulletinsScreenState extends State<BulletinsScreen>
       case 1:
         status = 'en cours';
         break;
-      case 2:
+      default :
         status = null;
         break;
     }
     await fetchBS(status);
+    await fetchFamilyMembers();
   }
+  Future<void> fetchFamilyMembers() async {
+    try {
+      FamilyMembersResponse familyResponse = await userViewModel.getFamilyMembers(int.parse(userId!), selectedDbValue!);
+      if (familyResponse.resCode == 1) {
+        setState(() {
+          listBenef = {
+            if (familyResponse.name != null) familyResponse.id!: familyResponse.name!,
+            if (familyResponse.conjoint != null) familyResponse.conjointId!: familyResponse.conjoint!,
+            ...{for (var child in familyResponse.children!) child.id: child.name},
+            ...{for (var parent in familyResponse.parents!) parent.id: parent.name},
+          };
+          isLoadingFamily = false;
+          isErrorFamily = false;
+        });
+      } else {
+        setState(() {
+          isLoadingFamily = false;
+          isErrorFamily = true;
+        });
+      }
+    } catch (e) {
+      print("Error fetching family members: $e");
+      setState(() {
+        isLoadingFamily = false;
+        isErrorFamily = true;
+      });
+    }
+  }
+
 
   Future<void> fetchBS(String? status) async {
     try {
-      List<Bulletin> fetchedList = [];
-//        Fetch bulletin list based on status
-//       ListBulletinsResponse bulletinResponse = status == null
-//           ? await bulletinViewModel.getBulletins(userId!)
-//           : await bulletinViewModel.getBulletinsByStatus(userId!, status.trim().toLowerCase());
+      ListBulletinsResponse bulletinResponse = await bulletinViewModel.getBulletinsByStatus(userId!, status?.trim().toLowerCase(), selectedDbValue!);
 
-      ListBulletinsResponse bulletinResponse = ListBulletinsResponse(
-        res_code: 1,
-        bulletins: [
-          /// MOHAMED
-          Bulletin(
-            bsId: 490259,
-            numBs: "240001550",
-            dateMaladie: DateTime(2024, 04, 01).toString(),
-            dateReglement: '',
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "adherent",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 350.0,
-            totalPec: 212.0,
-            state: "En cours",
-            isCV: false, 
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "adherent",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "adherent",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "adherent",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "adherent",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "adherent",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "adherent",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          ///SONIA
-          Bulletin(
-            bsId: 490259,
-            numBs: "240001550",
-            dateMaladie: DateTime(2024, 04, 01).toString(),
-            dateReglement: '',
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "conjoint",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 350.0,
-            totalPec: 212.0,
-            state: "En cours",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "conjoint",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "conjoint",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "conjoint",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "conjoint",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "conjoint",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "conjoint",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          /// ENFANT
-          Bulletin(
-            bsId: 490259,
-            numBs: "240001550",
-            dateMaladie: DateTime(2024, 04, 01).toString(),
-            dateReglement: '',
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "enfant",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 350.0,
-            totalPec: 212.0,
-            state: "En cours",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "enfants",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "enfants",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "enfants",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "enfants",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "enfants",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-          Bulletin(
-            bsId: 250563,
-            numBs: "1708700",
-            dateMaladie: DateTime(2023, 12, 21).toString(),
-            dateReglement: DateTime(2024, 2, 16).toString(),
-            patient: "SAHRAOUI MOHAMED",
-            prestataire: "enfants",
-            adherent: "SAHRAOUI MOHAMED",
-            totalDep: 210.647,
-            totalPec: 177.582,
-            state: "Traité",
-            isCV: false,
-            prestations: [Prestation(discipline: "pharmacie", prestationName: "pharmacie", montant: 999.999, pec: 999.999)],
-
-          ),
-
-        ],
-      );
 
 
       setState(() {
-        if (bulletinResponse.res_code == 1) {
+        if (bulletinResponse.resCode == 1) {
           bsList = bulletinResponse.bulletins;
+
+          countBsOngoing = bulletinResponse.totalEnCours ?? 0;
+          countBsHandled = bulletinResponse.totalTraite ?? 0;
+          countBsTotal = bulletinResponse.totalAll ?? 0;
+
           isLoading = false;
           isError = false;
         } else {
@@ -564,7 +283,7 @@ class _BulletinsScreenState extends State<BulletinsScreen>
             indicatorColor: themeProvider.ateneoBlue,
             labelColor: themeProvider.ateneoBlue,
             unselectedLabelColor: themeProvider.cadetGrey,
-            tabs: tabs,
+            tabs: getTabs(),
             tabAlignment: TabAlignment.center,
           ),
           trailing: CustomAppBarButton(
@@ -577,7 +296,8 @@ class _BulletinsScreenState extends State<BulletinsScreen>
           icon: null,
         ),
         body: isLoading
-            ? SpinKitCircle(color: themeProvider.blue.withOpacity(0.6), size: 50.0)
+            ? SpinKitCircle(
+            color: themeProvider.blue.withOpacity(0.6), size: 50.0)
             : isError
             ? ErrorDisplayAndRefresh(appTextStyles, themeProvider, () async {
           setState(() {
@@ -618,5 +338,21 @@ class _BulletinsScreenState extends State<BulletinsScreen>
     _tabController.dispose();
     super.dispose();
   }
-}
 
+
+  Future<String?> getSelectedValue() async {
+
+    if(Responsive.isMobile(context) && !kIsWeb)
+    {
+      final selectedValueService = locator<SelectedDbValueService>();
+
+      return await selectedValueService.getSelectedValue();
+    }else{
+      final SelectedDbValueService = "backoffice_Gras_2";
+      return SelectedDbValueService;
+    }
+  }
+
+
+
+}
